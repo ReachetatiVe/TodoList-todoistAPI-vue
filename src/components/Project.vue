@@ -1,11 +1,10 @@
 <template>
-  <div>
-    <h2>{{info.name}}</h2>
-  </div>
+  <v-list-item-content>
+    <v-list-item-title>{{ info.name }}</v-list-item-title>
+  </v-list-item-content>
 </template>
 
 <script>
-
 // @ is an alias to /src
 
 export default {
@@ -13,17 +12,5 @@ export default {
   props: {
     info: {},
   },
-  data() {
-    return {
-    };
-  },
-
-  computed: {
-  },
-
-  mounted() {
-
-  },
-  methods: {},
 };
 </script>

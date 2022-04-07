@@ -1,12 +1,13 @@
 <template>
-  <div>
     <div class="autorization">
-      <button class="autorization__btn" @click="authorization()">
+      <!-- <button class="autorization__btn" @click="authorization()">
         Авторизоваться
-      </button>
+      </button> -->
+      <v-btn x-large color="primary" elevation="6" @click="authorization()">Авторизоваться</v-btn>
     </div>
-    <router-view />
-  </div>
+    <!-- <v-main>
+      <router-view />
+    </v-main> -->
 </template>
 
 <script>
@@ -30,7 +31,11 @@ export default {
 
 <style scoped lang="scss">
 .autorization {
-  padding: 25px;
+  padding: 25px 0;
+  margin: 0 auto;
+  max-width: 900px;
+  text-align: center;
+
   // .autorization__btn
   &__btn {
     padding: 10px 15px;
