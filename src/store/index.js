@@ -12,6 +12,108 @@ export default new Vuex.Store({
     sections: [],
     currentProjId: "",
     curProjTasks: [],
+    colors: [
+      {
+        id: 30,
+        name: "berry_red",
+        hex: "#b8256f",
+      },
+      {
+        id: 31,
+        name: "red",
+        hex: "#db4035",
+      },
+      {
+        id: 32,
+        name: "orange",
+        hex: "#ff9933",
+      },
+      {
+        id: 33,
+        name: "yellow",
+        hex: "#fad000",
+      },
+      {
+        id: 34,
+        name: "olive_green",
+        hex: "#afb83b",
+      },
+      {
+        id: 35,
+        name: "lime_green",
+        hex: "#7ecc49",
+      },
+      {
+        id: 36,
+        name: "green",
+        hex: "#299438",
+      },
+      {
+        id: 37,
+        name: "mint_green",
+        hex: "#6accbc",
+      },
+      {
+        id: 38,
+        name: "teal",
+        hex: "#158fad",
+      },
+      {
+        id: 39,
+        name: "sky_blue",
+        hex: "#14aaf5",
+      },
+      {
+        id: 40,
+        name: "light_blue",
+        hex: "#96c3eb",
+      },
+      {
+        id: 41,
+        name: "blue",
+        hex: "#4073ff",
+      },
+      {
+        id: 42,
+        name: "grape",
+        hex: "#884dff",
+      },
+      {
+        id: 43,
+        name: "violet",
+        hex: "#af38eb",
+      },
+      {
+        id: 44,
+        name: "lavender",
+        hex: "#eb96eb",
+      },
+      {
+        id: 45,
+        name: "magenta",
+        hex: "#e05194",
+      },
+      {
+        id: 46,
+        name: "salmon",
+        hex: "#ff8d85",
+      },
+      {
+        id: 47,
+        name: "charcoal",
+        hex: "#808080",
+      },
+      {
+        id: 48,
+        name: "grey",
+        hex: "#b8b8b8",
+      },
+      {
+        id: 49,
+        name: "taupe",
+        hex: "#ccac93",
+      },
+    ],
   },
   getters: {
     GET_TOKEN: (state) => {
@@ -29,6 +131,9 @@ export default new Vuex.Store({
     GET_CURR_PROJ_ID: (state) => {
       return state.currentProjId;
     },
+    GET_COLORS: (state) => {
+      return state.colors;
+    }
   },
   mutations: {
     initialiseStore(state) {
@@ -133,7 +238,6 @@ export default new Vuex.Store({
       api
         .addTask(taskInfo)
         .then((task) => {
-          console.log(task);
           context.commit("SET_CURR_PROJ_TASKS", task);
         })
         .catch((error) => console.log(error));
@@ -143,7 +247,9 @@ export default new Vuex.Store({
         sectionInfo === null ||
         sectionInfo === undefined ||
         sectionInfo.name === null ||
-        sectionInfo.name === undefined
+        sectionInfo.name === undefined ||
+        sectionInfo.projectId === null ||
+        sectionInfo.projectId === undefined
       )
         return;
       const api = context.state.api;
@@ -152,7 +258,6 @@ export default new Vuex.Store({
       api
         .addSection(sectionInfo)
         .then((section) => {
-          console.log(section);
           context.commit("SET_SECTIONS", section);
         })
         .catch((error) => console.log(error));

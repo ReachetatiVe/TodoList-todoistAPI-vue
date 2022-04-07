@@ -15,6 +15,11 @@
       :items="getProjectNames"
       label="Select project"
     ></v-select>
+    <v-select
+      v-model="taskSectionName"
+      :items="getSectionsNames"
+      label="Select section"
+    ></v-select>
     <v-btn @click="addTask">Окей, збс</v-btn>
   </div>
 </template>
@@ -27,7 +32,9 @@ export default {
       taskContent: "",
       taskDescription: "",
       taskProjectName: "",
+      taskSectionName: "",
       projectNames: [],
+      sectionsNames: [],
     };
   },
   computed: {
@@ -40,19 +47,36 @@ export default {
     getProjects() {
       return this.$store.getters.GET_PROJECTS;
     },
+    getSectionsNames() {
+      this.getSections.forEach((element) => {
+        this.sectionsNames.push(element.name);
+      });
+      return this.sectionsNames;
+    },
+    getSections() {
+      return this.$store.getters.GET_SECTIONS;
+    }
   },
   methods: {
     addTask() {
       this.$store.dispatch("addNewTask", {
         content: this.taskContent,
         description: this.taskDescription,
-        projectId: this.searchProjId()
+        projectId: this.searchProjId(),
+        sectionId: this.searchSectionId(),
       });
     },
     searchProjId() {
       let id;
       this.getProjects.forEach((el) => {
         if (el.name === this.taskProjectName) id = el.id;
+      });
+      return id;
+    },
+    searchSectionId() {
+      let id;
+      this.getSections.forEach((el) => {
+        if (el.name === this.taskSectionName) id = el.id;
       });
       return id;
     },

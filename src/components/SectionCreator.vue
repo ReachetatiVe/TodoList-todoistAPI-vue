@@ -16,7 +16,7 @@
 </template>
 <script>
 export default {
-  name: "Redirect-page",
+  name: "Section-Creator",
   data() {
     return {
       sectionName: "",

@@ -1,8 +1,8 @@
 <template>
   <v-list-item-content>
-    <v-list-item-title @click="makeProjectCurrent()">{{
-      info.name
-    }}</v-list-item-title>
+    <v-list-item-title @click="makeProjectCurrent()">
+      <span class="project-color" v-bind:style="{ backgroundColor: getColorById }"></span>{{" "+info.name }}
+    </v-list-item-title>
   </v-list-item-content>
 </template>
 
@@ -10,9 +10,22 @@
 // @ is an alias to /src
 
 export default {
-  name: "project-page",
+  name: "project-item",
   props: {
     info: {},
+  },
+  data() {
+    return {};
+  },
+  computed: {
+    getColorById() {
+      let color = "#fff";
+      this.$store.getters.GET_COLORS.forEach((element) => {
+        if (element.id === this.info.color) color = element.hex;
+      });
+      console.log(color);
+      return color;
+    },
   },
   methods: {
     makeProjectCurrent() {
@@ -22,3 +35,12 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+.project-color {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+}
+</style>
