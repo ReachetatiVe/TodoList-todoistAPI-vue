@@ -5,17 +5,20 @@
         color="primary"
         large
         class="add-task__btn"
-        @click="toggleShowTaskCreator()"
-        >Add task</v-btn
+        v-for="item in modes"
+        :key="item.id"
+        @click="selectMode(item)"
+        >Add {{ item }}</v-btn
       >
-      <TaskCreator v-show="showTaskCreator" />
+      <TaskCreator v-show="mode === 'task'" />
+      <SectionCreator v-show="mode === 'section'"/>
     </div>
     <div class="text-center d-flex pb-4">
       <v-btn @click="all"> Show all </v-btn>
       <v-btn @click="none"> Hide all </v-btn>
     </div>
-    <v-expansion-panels  v-model="panel" multiple>
-      <v-expansion-panel v-show="getTasksWithoutSections.length>0">
+    <v-expansion-panels v-model="panel" multiple>
+      <v-expansion-panel v-show="getTasksWithoutSections.length > 0">
         <v-expansion-panel-header>
           <h2>Tasks Without section</h2></v-expansion-panel-header
         >
@@ -41,6 +44,7 @@
 <script>
 import Section from "./Section.vue";
 import TaskCreator from "./TaskCreator.vue";
+import SectionCreator from "./SectionCreator.vue"
 import Task from "./Task.vue";
 
 export default {
@@ -48,6 +52,8 @@ export default {
     return {
       panel: [],
       showTaskCreator: false,
+      mode: "",
+      modes: ["task", "section", "project"],
     };
   },
   computed: {
@@ -69,7 +75,9 @@ export default {
   },
   methods: {
     all() {
-      this.panel = [...Array(this.getSections.length+1).keys()].map((k, i) => i);
+      this.panel = [...Array(this.getSections.length + 1).keys()].map(
+        (k, i) => i
+      );
     },
     // Reset the panel
     none() {
@@ -87,11 +95,16 @@ export default {
         return true;
       else return false;
     },
+    selectMode(value) {
+      if (this.mode === value) this.mode = "";
+      else this.mode = value;
+    },
   },
   components: {
     Section,
     TaskCreator,
     Task,
+    SectionCreator,
   },
 };
 </script>

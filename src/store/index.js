@@ -51,9 +51,11 @@ export default new Vuex.Store({
       else state.curProjTasks.push(payload);
     },
     SET_SECTIONS: (state, payload) => {
-      payload.forEach((element) => {
-        state.sections.push(element);
-      });
+      if (Array.isArray(payload))
+        payload.forEach((element) => {
+          state.sections.push(element);
+        });
+      else state.sections.push(payload);
     },
     SET_PROJECTS: (state, payload) => {
       payload.forEach((element) => {
@@ -133,6 +135,25 @@ export default new Vuex.Store({
         .then((task) => {
           console.log(task);
           context.commit("SET_CURR_PROJ_TASKS", task);
+        })
+        .catch((error) => console.log(error));
+    },
+    addNewSection(context, sectionInfo) {
+      if (
+        sectionInfo === null ||
+        sectionInfo === undefined ||
+        sectionInfo.name === null ||
+        sectionInfo.name === undefined
+      )
+        return;
+      const api = context.state.api;
+
+      api;
+      api
+        .addSection(sectionInfo)
+        .then((section) => {
+          console.log(section);
+          context.commit("SET_SECTIONS", section);
         })
         .catch((error) => console.log(error));
     },

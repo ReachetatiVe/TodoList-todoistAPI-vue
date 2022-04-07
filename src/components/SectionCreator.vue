@@ -2,20 +2,16 @@
     <div>
     <h1>Create task</h1>
     <v-text-field
-      label="Task content"
+      label="Section name"
       hide-details="auto"
-      v-model="taskContent"
-    ></v-text-field>
-    <v-text-field
-      v-model="taskDescription"
-      label="Task description"
+      v-model="sectionName"
     ></v-text-field>
     <v-select
       v-model="taskProjectName"
       :items="getProjectNames"
       label="Select project"
     ></v-select>
-    <v-btn @click="addTask">Окей, збс</v-btn>
+    <v-btn @click="addSection">Окей, збс</v-btn>
   </div>
 </template>
 <script>
@@ -23,8 +19,7 @@ export default {
   name: "Redirect-page",
   data() {
     return {
-      taskContent: "",
-      taskDescription: "",
+      sectionName: "",
       taskProjectName: "",
       projectNames: [],
     };
@@ -41,10 +36,9 @@ export default {
     },
   },
   methods: {
-    addTask() {
-      this.$store.dispatch("addNewTask", {
-        content: this.taskContent,
-        description: this.taskDescription,
+    addSection() {
+      this.$store.dispatch("addNewSection", {
+        name: this.sectionName,
         projectId: this.searchProjId()
       });
     },
