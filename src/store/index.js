@@ -38,6 +38,7 @@ export default new Vuex.Store({
     },
     SET_TOKEN: (state, payload) => {
       state.token = payload;
+      localStorage.setItem("token", payload);
     },
     CLEAR_PROJECTS: (state) => {
       state.projects = [];
