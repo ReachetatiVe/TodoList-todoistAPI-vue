@@ -11,6 +11,7 @@ export default new Vuex.Store({
     projects: [],
     sections: [],
     currentProjId: "",
+    curProjTasks: [],
   },
   getters: {
     GET_TOKEN: (state) => {
@@ -21,6 +22,12 @@ export default new Vuex.Store({
     },
     GET_SECTIONS: (state) => {
       return state.sections;
+    },
+    GET_CURR_PROJ_TASKS: (state) => {
+      return state.curProjTasks;
+    },
+    GET_CURR_PROJ_ID: (state) => {
+      return state.currentProjId;
     },
   },
   mutations: {
@@ -35,6 +42,13 @@ export default new Vuex.Store({
     },
     SET_CURRENT_PROJECT_ID: (state, payload) => {
       state.currentProjId = payload;
+    },
+    SET_CURR_PROJ_TASKS: (state, payload) => {
+      if (Array.isArray(payload))
+        payload.forEach((element) => {
+          state.curProjTasks.push(element);
+        });
+      else state.curProjTasks.push(payload);
     },
     SET_SECTIONS: (state, payload) => {
       payload.forEach((element) => {
@@ -59,6 +73,9 @@ export default new Vuex.Store({
     CLEAR_PROJECTS: (state) => {
       state.projects = [];
     },
+    CLEAR_CURR_PROJ_TASKS: (state) => {
+      state.curProjTasks = [];
+    },
   },
   actions: {
     getApi(context, token) {
@@ -72,7 +89,6 @@ export default new Vuex.Store({
       api
         .getProjects()
         .then((projects) => {
-          console.log(projects);
           context.commit("SET_PROJECTS", projects);
         })
         .catch((error) => console.log(error));
@@ -83,8 +99,40 @@ export default new Vuex.Store({
       api
         .getSections(context.state.currentProjId)
         .then((sections) => {
-          console.log(sections);
           context.commit("SET_SECTIONS", sections);
+        })
+        .catch((error) => console.log(error));
+    },
+    getTasksInProject(context) {
+      context.commit("CLEAR_CURR_PROJ_TASKS");
+      const api = context.state.api;
+      api
+        .getTasks({ project_id: context.state.currentProjId })
+        .then((tasks) => {
+          context.commit("SET_CURR_PROJ_TASKS", tasks);
+        })
+        .catch((error) => console.log(error));
+    },
+    getCurrentProjInfo(context) {
+      context.dispatch("getAllSections");
+      context.dispatch("getTasksInProject");
+    },
+    addNewTask(context, taskInfo) {
+      console.log(taskInfo);
+      if (
+        taskInfo === null ||
+        taskInfo === undefined ||
+        taskInfo.content === null ||
+        taskInfo.content === undefined
+      )
+        return;
+      const api = context.state.api;
+
+      api
+        .addTask(taskInfo)
+        .then((task) => {
+          console.log(task);
+          context.commit("SET_CURR_PROJ_TASKS", task);
         })
         .catch((error) => console.log(error));
     },

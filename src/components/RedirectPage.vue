@@ -24,7 +24,6 @@ export default {
           `https://todoist.com/oauth/access_token?client_id=${this.clientId}&client_secret=${this.clientSecret}&code=${code}`
         )
         .then((response) => {
-          console.log(response);
           const token = response.data.access_token;
         //   this.$store.commit("SET_TOKEN", token);
           this.$store.dispatch("getApi", token)
@@ -39,7 +38,6 @@ export default {
   watch: {
     $route: {
       handler: function (route) {
-        console.log(route.query.code);
         if (route.query.code !== null || route.query.code !== undefined) {
           this.getToken(route.query.code);
         }

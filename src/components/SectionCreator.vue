@@ -1,5 +1,5 @@
 <template>
-  <div>
+    <div>
     <h1>Create task</h1>
     <v-text-field
       label="Task content"
@@ -18,10 +18,9 @@
     <v-btn @click="addTask">Окей, збс</v-btn>
   </div>
 </template>
-
 <script>
 export default {
-  name: "Task-Creator",
+  name: "Redirect-page",
   data() {
     return {
       taskContent: "",

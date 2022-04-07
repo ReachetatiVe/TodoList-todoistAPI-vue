@@ -14,18 +14,10 @@ export default {
   props: {
     info: {},
   },
-  computed: {
-    // getToken() {
-    //   return this.$store.getters.GET_TOKEN;
-    // },
-  },
   methods: {
     makeProjectCurrent() {
       this.$store.commit("SET_CURRENT_PROJECT_ID", this.info.id);
-      this.loadSections();
-    },
-    loadSections() {
-      this.$store.dispatch("getAllSections");
+      this.$store.dispatch("getCurrentProjInfo");
     },
   },
 };

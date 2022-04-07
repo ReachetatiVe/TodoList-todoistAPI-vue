@@ -2,10 +2,10 @@
   <v-app id="inspire">
     <v-navigation-drawer v-model="drawer" app>
       <v-list>
-        <v-list-item>Inbox</v-list-item>
-        <v-list-item>Today</v-list-item>
-        <v-list-item>Upcoming</v-list-item>
-        <v-list-item>Filters & labels</v-list-item>
+        <v-list-item link>Inbox</v-list-item>
+        <v-list-item link>Today</v-list-item>
+        <v-list-item link>Upcoming</v-list-item>
+        <v-list-item link>Filters & labels</v-list-item>
       </v-list>
       <v-divider></v-divider>
       <v-expansion-panels>
@@ -32,7 +32,7 @@
     </v-app-bar>
 
     <v-main>
-      <!--  -->
+      <ProjecBrowser v-if="getCurrentProjectId"/>
     </v-main>
   </v-app>
 </template>
@@ -40,6 +40,7 @@
 <script>
 // import { TodoistApi } from "@doist/todoist-api-typescript";
 import Project from "./Project.vue";
+import ProjecBrowser from "./ProjectBrowser.vue";
 
 // @ is an alias to /src
 
@@ -60,6 +61,9 @@ export default {
     getProjects() {
       return this.$store.getters.GET_PROJECTS;
     },
+    getCurrentProjectId() {
+      return this.$store.getters.GET_CURR_PROJ_ID;
+    }
   },
 
   mounted() {
@@ -85,6 +89,7 @@ export default {
   methods: {},
   components: {
     Project,
+    ProjecBrowser,
   },
 };
 </script>

@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Auth from '../components/RedirectPage.vue'
-import Creator from "../components/TaskCreator.vue"
 import ProjectsList from "../components/ProjectsList.vue"
 
 Vue.use(VueRouter)
@@ -25,11 +24,6 @@ const routes = [
     path: '/auth',
     name: 'auth',
     component: Auth,
-  },
-  {
-    path: '/creator',
-    name: 'creator',
-    component: Creator,
   },
   {
     path: '/project-list',
