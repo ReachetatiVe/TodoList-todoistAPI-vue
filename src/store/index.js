@@ -9,6 +9,8 @@ export default new Vuex.Store({
     api: TodoistApi,
     token: "",
     projects: [],
+    sections: [],
+    currentProjId: "",
   },
   getters: {
     GET_TOKEN: (state) => {
@@ -16,6 +18,9 @@ export default new Vuex.Store({
     },
     GET_PROJECTS: (state) => {
       return state.projects;
+    },
+    GET_SECTIONS: (state) => {
+      return state.sections;
     },
   },
   mutations: {
@@ -28,6 +33,14 @@ export default new Vuex.Store({
         }
       }
     },
+    SET_CURRENT_PROJECT_ID: (state, payload) => {
+      state.currentProjId = payload;
+    },
+    SET_SECTIONS: (state, payload) => {
+      payload.forEach((element) => {
+        state.sections.push(element);
+      });
+    },
     SET_PROJECTS: (state, payload) => {
       payload.forEach((element) => {
         state.projects.push(element);
@@ -39,6 +52,9 @@ export default new Vuex.Store({
     SET_TOKEN: (state, payload) => {
       state.token = payload;
       localStorage.setItem("token", payload);
+    },
+    CLEAR_SECTIONS: (state) => {
+      state.sections = [];
     },
     CLEAR_PROJECTS: (state) => {
       state.projects = [];
@@ -58,6 +74,17 @@ export default new Vuex.Store({
         .then((projects) => {
           console.log(projects);
           context.commit("SET_PROJECTS", projects);
+        })
+        .catch((error) => console.log(error));
+    },
+    getAllSections(context) {
+      context.commit("CLEAR_SECTIONS");
+      const api = context.state.api;
+      api
+        .getSections(context.state.currentProjId)
+        .then((sections) => {
+          console.log(sections);
+          context.commit("SET_SECTIONS", sections);
         })
         .catch((error) => console.log(error));
     },
