@@ -68,7 +68,9 @@ export default {
       return this.$store.getters.GET_SECTIONS;
     },
     getTasks() {
-      return this.$store.getters.GET_CURR_PROJ_TASKS;
+      return this.$store.getters.GET_TASKS.filter((el) => {
+        return el.projectId === this.info.projectId;
+      });
     },
     getSubtasks() {
       return this.getTasks.filter((task) => {
@@ -77,6 +79,9 @@ export default {
     },
     getCreatorModes() {
       return this.$store.getters.GET_CREATOR_MODES;
+    },
+    getCurrentProject() {
+      return this.$store.getters.GET_CURR_PROJECT;
     },
   },
   methods: {

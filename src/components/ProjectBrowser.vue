@@ -2,17 +2,17 @@
   <div>
     <div class="creators">
       <div class="creators__btns">
-      <v-btn
-        color="primary"
-        large
-        class="creators__btn"
-        v-for="item in modes"
-        :key="item.id"
-        @click="selectMode(item)"
-        >Add {{ item }}</v-btn
-      >
+        <v-btn
+          color="primary"
+          large
+          class="creators__btn"
+          v-for="item in modes"
+          :key="item.id"
+          @click="selectMode(item)"
+          >Add {{ item }}</v-btn
+        >
       </div>
-      <TaskCreator v-if="mode === 'task'" v-bind:mode="'create'"/>
+      <TaskCreator v-if="mode === 'task'" v-bind:mode="'create'" />
       <SectionCreator v-if="mode === 'section'" />
       <ProjectCreator v-if="mode === 'project'" />
     </div>
@@ -60,24 +60,18 @@ export default {
     };
   },
   computed: {
-    getSections() {
-      return this.$store.getters.GET_SECTIONS;
+    getCurrentProject() {
+      return this.$store.getters.GET_CURR_PROJECT;
     },
-    getSectionsInCurren(){
-      return this.getTasks.filter((el) => {
-        return (
-          //Without section && !substasks
-          el.sectionId === null ||
-          el.sectionId === undefined ||
-          (el.sectionId === 0 &&
-            (el.parentId === null ||
-              el.parentId === undefined ||
-              el.parentId === ""))
-        );
+    getSections() {
+      return this.$store.getters.GET_SECTIONS.filter((el) => {
+        return el.projectId === this.getCurrentProject.id;
       });
     },
     getTasks() {
-      return this.$store.getters.GET_CURR_PROJ_TASKS;
+      return this.$store.getters.GET_TASKS.filter((el) => {
+        return el.projectId === this.getCurrentProject.id;
+      });
     },
     getTasksWithoutSections() {
       return this.getTasks.filter((el) => {

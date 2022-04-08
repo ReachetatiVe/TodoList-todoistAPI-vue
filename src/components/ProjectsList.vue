@@ -1,6 +1,5 @@
 <template>
   <v-container>
-    <v-btn @click="loadAllSections()">Волшебная кнопка</v-btn>
     <v-navigation-drawer v-model="drawer" app>
       <v-list>
         <v-list-item link>Calendar</v-list-item>
@@ -62,14 +61,9 @@ export default {
     },
   },
 
-  methods: {
-    loadAllSections(){
-      this.$store.dispatch("getSectionsInSelProj");
-    }
-  },
-
   mounted() {
-    this.$store.dispatch("getAllProjects");
+    this.$store.dispatch("getAllInfo");
+
     //TODO: почему не срабатывает unmounted и переделать
     // this.$store.commit("CLEAR_PROJECTS");
     // this.api = new TodoistApi(this.getToken);

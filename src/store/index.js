@@ -10,10 +10,9 @@ export default new Vuex.Store({
     token: "",
     projects: [],
     sections: [],
+    tasks: [],
     currentProject: {},
     selectedProject: {},
-    selctedSProjectSections:[],
-    curProjTasks: [],
     colors: [
       {
         id: 30,
@@ -127,17 +126,14 @@ export default new Vuex.Store({
     GET_SECTIONS: (state) => {
       return state.sections;
     },
-    GET_CURR_PROJ_TASKS: (state) => {
-      return state.curProjTasks;
+    GET_TASKS: (state)=>{
+      return state.tasks;
     },
     GET_CURR_PROJECT: (state) => {
       return state.currentProject;
     },
     GET_SELECTED_PROJECT: (state) => {
       return state.selectedProject;
-    },
-    GET_SELECTED_PROJECT_SECTIONS: (state) => {
-      return state.selctedSProjectSections;
     },
     GET_COLORS: (state) => {
       return state.colors;
@@ -157,13 +153,6 @@ export default new Vuex.Store({
       if (payload === null || payload === undefined) return;
       state.currentProject = payload;
     },
-    SET_CURR_PROJ_TASKS: (state, payload) => {
-      if (Array.isArray(payload))
-        payload.forEach((element) => {
-          state.curProjTasks.push(element);
-        });
-      else state.curProjTasks.push(payload);
-    },
     SET_SECTIONS: (state, payload) => {
       if (Array.isArray(payload))
         payload.forEach((element) => {
@@ -171,12 +160,12 @@ export default new Vuex.Store({
         });
       else state.sections.push(payload);
     },
-    SET_SELECTED_PROJ_SECTIONS: (state, payload) => {
+    SET_TASKS: (state, payload) => {
       if (Array.isArray(payload))
         payload.forEach((element) => {
-          state.selctedSProjectSections.push(element);
+          state.tasks.push(element);
         });
-      else state.selctedSProjectSections.push(payload);
+      else state.tasks.push(payload);
     },
     SET_PROJECTS: (state, payload) => {
       if (Array.isArray(payload))
@@ -197,9 +186,6 @@ export default new Vuex.Store({
     },
     CLEAR_PROJECTS: (state) => {
       state.projects = [];
-    },
-    CLEAR_CURR_PROJ_TASKS: (state) => {
-      state.curProjTasks = [];
     },
   },
   actions: {
@@ -223,20 +209,20 @@ export default new Vuex.Store({
       context.commit("CLEAR_SECTIONS");
       const api = context.state.api;
       api
-        .getSections(context.state.currentProject.id)
+        .getSections()
         .then((sections) => {
           context.commit("SET_SECTIONS", sections);
         })
         .catch((error) => console.log(error));
     },
 
-    getSectionsInSelProj(context) {
-      context.state.selctedSProjectSections = [];
+    getAllTasks(context) {
+      context.state.tasks = [];
       const api = context.state.api;
       api
-        .getSections()
-        .then((sections) => {
-          context.commit("SET_SELECTED_PROJ_SECTIONS", sections);
+        .getTasks({ project_id: context.state.currentProject.id })
+        .then((tasks) => {
+          context.commit("SET_TASKS", tasks);
         })
         .catch((error) => console.log(error));
     },
@@ -254,6 +240,11 @@ export default new Vuex.Store({
     getCurrentProjInfo(context) {
       context.dispatch("getAllSections");
       context.dispatch("getTasksInProject");
+    },
+    getAllInfo(context) {
+      context.dispatch("getAllProjects");
+      context.dispatch("getAllSections");
+      context.dispatch("getAllTasks");
     },
     addNewTask(context, taskInfo) {
       if (

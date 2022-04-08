@@ -22,8 +22,13 @@ export default {
     info: {},
   },
   computed: {
+    getCurrentProject() {
+      return this.$store.getters.GET_CURR_PROJECT;
+    },
     getTasks() {
-      return this.$store.getters.GET_CURR_PROJ_TASKS;
+      return this.$store.getters.GET_TASKS.filter((el) => {
+        return el.projectId === this.getCurrentProject.id;
+      });
     },
     getTasksInThisSections() {
       //Tasks from this section && !substasks

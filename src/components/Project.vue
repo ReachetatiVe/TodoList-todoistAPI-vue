@@ -29,7 +29,7 @@ export default {
   methods: {
     makeProjectCurrent() {
       this.$store.commit("SET_CURRENT_PROJECT", this.info);
-      this.$store.dispatch("getCurrentProjInfo");
+      // this.$store.dispatch("getCurrentProjInfo");
     },
   },
 };
