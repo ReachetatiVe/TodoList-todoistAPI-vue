@@ -4,10 +4,9 @@
       <h2>{{ info.name }}</h2></v-expansion-panel-header
     >
     <v-expansion-panel-content>
-      <h3>List of tasks</h3>
       <v-list dense>
         <v-list-item v-for="task in getTasksInThisSections" :key="task.id">
-          <Task v-bind:info="task" />
+          <TaskEntry v-bind:info="task" />
         </v-list-item>
       </v-list>
     </v-expansion-panel-content>
@@ -15,7 +14,7 @@
 </template>
 
 <script>
-import Task from "./Task.vue";
+import TaskEntry from "./TaskEntry.vue";
 
 export default {
   name: "Section-page",
@@ -27,15 +26,19 @@ export default {
       return this.$store.getters.GET_CURR_PROJ_TASKS;
     },
     getTasksInThisSections() {
+      //Tasks from this section && !substasks
       return this.getTasks.filter((el) => {
         return (
-          el.sectionId === this.info.id
+          el.sectionId === this.info.id &&
+          (el.parentId === null ||
+            el.parentId === undefined ||
+            el.parentId === "")
         );
       });
     },
   },
   components: {
-    Task,
+    TaskEntry,
   },
 };
 </script>

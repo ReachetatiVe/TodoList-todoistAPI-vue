@@ -11,8 +11,8 @@
         >Add {{ item }}</v-btn
       >
       <TaskCreator v-show="mode === 'task'" />
-      <SectionCreator v-show="mode === 'section'"/>
-      <ProjectCreator v-show="mode === 'project'"/>
+      <SectionCreator v-show="mode === 'section'" />
+      <ProjectCreator v-show="mode === 'project'" />
     </div>
     <h2></h2>
     <div class="text-center d-flex pb-4">
@@ -25,10 +25,9 @@
           <h2>Tasks Without section</h2></v-expansion-panel-header
         >
         <v-expansion-panel-content>
-          <h3>List of tasks</h3>
           <v-list>
             <v-list-item v-for="task in getTasksWithoutSections" :key="task.id">
-              <Task v-bind:info="task" />
+              <TaskEntry v-bind:info="task" />
             </v-list-item>
           </v-list>
         </v-expansion-panel-content>
@@ -46,9 +45,9 @@
 <script>
 import Section from "./Section.vue";
 import TaskCreator from "./TaskCreator.vue";
-import SectionCreator from "./SectionCreator.vue"
-import ProjectCreator from "./ProjectCreator.vue"
-import Task from "./Task.vue";
+import SectionCreator from "./SectionCreator.vue";
+import ProjectCreator from "./ProjectCreator.vue";
+import TaskEntry from "./TaskEntry.vue";
 
 export default {
   data() {
@@ -69,9 +68,13 @@ export default {
     getTasksWithoutSections() {
       return this.getTasks.filter((el) => {
         return (
+          //Without section && !substasks
           el.sectionId === null ||
           el.sectionId === undefined ||
-          el.sectionId === 0
+          (el.sectionId === 0 &&
+            (el.parentId === null ||
+              el.parentId === undefined ||
+              el.parentId === ""))
         );
       });
     },
@@ -106,7 +109,7 @@ export default {
   components: {
     Section,
     TaskCreator,
-    Task,
+    TaskEntry,
     SectionCreator,
     ProjectCreator,
   },
@@ -115,7 +118,7 @@ export default {
 <style scoped lang="scss">
 .creators {
   margin: 15px 0;
-  &__btn{
+  &__btn {
     margin-right: 15px;
   }
 }
