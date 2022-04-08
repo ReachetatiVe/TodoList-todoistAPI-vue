@@ -11,16 +11,18 @@
       label="Task description"
     ></v-text-field>
     <v-select
+      outlined
       v-model="taskProjectName"
       :items="getProjectNames"
       label="Select project"
     ></v-select>
     <v-select
+      outlined
       v-model="taskSectionName"
       :items="getSectionsNames"
       label="Select section"
     ></v-select>
-    <v-btn @click="addTask">Ok</v-btn>
+    <v-btn color="success" @click="addTask">Ok</v-btn>
   </div>
 </template>
 
@@ -55,7 +57,7 @@ export default {
     },
     getSections() {
       return this.$store.getters.GET_SECTIONS;
-    }
+    },
   },
   methods: {
     addTask() {

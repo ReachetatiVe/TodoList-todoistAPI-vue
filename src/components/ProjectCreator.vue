@@ -9,6 +9,7 @@
     ></v-text-field>
     <v-menu
       offset-y
+      outlined
       class="project-creator__menu"
       max-height="250"
       max-width="250"
@@ -44,7 +45,7 @@
       </v-list>
     </v-menu>
     <div>
-      <v-btn @click="addProject()">Ok</v-btn>
+      <v-btn color="success" @click="addProject()">Ok</v-btn>
     </div>
   </div>
 </template>
