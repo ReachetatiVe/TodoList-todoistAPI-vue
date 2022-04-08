@@ -30,14 +30,16 @@
         >Delete</v-btn
       >
     </div>
-    <div class="tasks__children">
-      <TaskEntry
+    <v-list class="task__children" dense>
+      <v-list-item
         v-for="subtask in getSubtasks"
         :key="subtask.id"
         :name="subtask.name"
-        v-bind:info="subtask"
-      />
-    </div>
+      >
+        <TaskEntry v-bind:info="subtask" />
+      </v-list-item>
+    </v-list>
+    <!-- <TaskEntry v-bind:info="subtask" /> -->
 
     <v-overlay :value="showOverlay">
       <TaskCreator />
@@ -86,7 +88,7 @@ export default {
 
 <style lang="scss" scoped>
 .task {
-  max-width: 75%;
+  // max-width: 75%;
   // cursor: pointer;
   // .task__header
   &__header {
@@ -96,7 +98,9 @@ export default {
   &__description {
     // max-width: 75%;
   }
-
+  &__children {
+    padding-left: 15px;
+  }
   &__managament-btns {
     position: relative;
   }
