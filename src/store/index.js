@@ -11,6 +11,8 @@ export default new Vuex.Store({
     projects: [],
     sections: [],
     currentProject: {},
+    selectedProject: {},
+    selctedSProjectSections:[],
     curProjTasks: [],
     colors: [
       {
@@ -131,6 +133,12 @@ export default new Vuex.Store({
     GET_CURR_PROJECT: (state) => {
       return state.currentProject;
     },
+    GET_SELECTED_PROJECT: (state) => {
+      return state.selectedProject;
+    },
+    GET_SELECTED_PROJECT_SECTIONS: (state) => {
+      return state.selctedSProjectSections;
+    },
     GET_COLORS: (state) => {
       return state.colors;
     },
@@ -162,6 +170,13 @@ export default new Vuex.Store({
           state.sections.push(element);
         });
       else state.sections.push(payload);
+    },
+    SET_SELECTED_PROJ_SECTIONS: (state, payload) => {
+      if (Array.isArray(payload))
+        payload.forEach((element) => {
+          state.selctedSProjectSections.push(element);
+        });
+      else state.selctedSProjectSections.push(payload);
     },
     SET_PROJECTS: (state, payload) => {
       if (Array.isArray(payload))
@@ -203,6 +218,7 @@ export default new Vuex.Store({
         })
         .catch((error) => console.log(error));
     },
+    //! Повторение кода
     getAllSections(context) {
       context.commit("CLEAR_SECTIONS");
       const api = context.state.api;
@@ -213,6 +229,18 @@ export default new Vuex.Store({
         })
         .catch((error) => console.log(error));
     },
+
+    getSectionsInSelProj(context) {
+      context.state.selctedSProjectSections = [];
+      const api = context.state.api;
+      api
+        .getSections()
+        .then((sections) => {
+          context.commit("SET_SELECTED_PROJ_SECTIONS", sections);
+        })
+        .catch((error) => console.log(error));
+    },
+
     getTasksInProject(context) {
       context.commit("CLEAR_CURR_PROJ_TASKS");
       const api = context.state.api;
@@ -249,11 +277,10 @@ export default new Vuex.Store({
         sectionInfo === null ||
         sectionInfo === undefined ||
         sectionInfo.name === null ||
-        sectionInfo.name === undefined ||
-        sectionInfo.projectId === null ||
-        sectionInfo.projectId === undefined
+        sectionInfo.name === undefined
       )
         return;
+      sectionInfo.projectId = context.state.currentProject.id;
       const api = context.state.api;
       api
         .addSection(sectionInfo)

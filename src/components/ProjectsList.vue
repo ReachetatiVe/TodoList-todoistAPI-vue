@@ -1,11 +1,11 @@
 <template>
   <v-container>
+    <v-btn @click="loadAllSections()">Волшебная кнопка</v-btn>
     <v-navigation-drawer v-model="drawer" app>
       <v-list>
         <v-list-item link>Calendar</v-list-item>
         <v-list-item link>Filters & labels</v-list-item>
       </v-list>
-      <v-divider></v-divider>
       <v-expansion-panels>
         <v-expansion-panel>
           <v-expansion-panel-header> Projects </v-expansion-panel-header>
@@ -29,7 +29,7 @@
       <v-toolbar-title>Manager</v-toolbar-title>
     </v-app-bar>
 
-    <ProjecBrowser v-if="getCurrentProject" />
+    <ProjecBrowser v-if="getCurrentProject.id" />
   </v-container>
 </template>
 
@@ -60,6 +60,12 @@ export default {
     getCurrentProject() {
       return this.$store.getters.GET_CURR_PROJECT;
     },
+  },
+
+  methods: {
+    loadAllSections(){
+      this.$store.dispatch("getSectionsInSelProj");
+    }
   },
 
   mounted() {

@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="creators">
+      <div class="creators__btns">
       <v-btn
         color="primary"
         large
@@ -10,11 +11,11 @@
         @click="selectMode(item)"
         >Add {{ item }}</v-btn
       >
-      <TaskCreator v-if="mode === 'task'" />
+      </div>
+      <TaskCreator v-if="mode === 'task'" v-bind:mode="'create'"/>
       <SectionCreator v-if="mode === 'section'" />
       <ProjectCreator v-if="mode === 'project'" />
     </div>
-    <h2></h2>
     <div class="text-center d-flex pb-4">
       <v-btn @click="all"> Show all </v-btn>
       <v-btn @click="none"> Hide all </v-btn>
@@ -61,6 +62,19 @@ export default {
   computed: {
     getSections() {
       return this.$store.getters.GET_SECTIONS;
+    },
+    getSectionsInCurren(){
+      return this.getTasks.filter((el) => {
+        return (
+          //Without section && !substasks
+          el.sectionId === null ||
+          el.sectionId === undefined ||
+          (el.sectionId === 0 &&
+            (el.parentId === null ||
+              el.parentId === undefined ||
+              el.parentId === ""))
+        );
+      });
     },
     getTasks() {
       return this.$store.getters.GET_CURR_PROJ_TASKS;
