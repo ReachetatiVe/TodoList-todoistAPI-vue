@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="add-task">
+    <div class="creators">
       <v-btn
         color="primary"
         large
-        class="add-task__btn"
+        class="creators__btn"
         v-for="item in modes"
         :key="item.id"
         @click="selectMode(item)"
@@ -12,7 +12,9 @@
       >
       <TaskCreator v-show="mode === 'task'" />
       <SectionCreator v-show="mode === 'section'"/>
+      <ProjectCreator v-show="mode === 'project'"/>
     </div>
+    <h2></h2>
     <div class="text-center d-flex pb-4">
       <v-btn @click="all"> Show all </v-btn>
       <v-btn @click="none"> Hide all </v-btn>
@@ -45,6 +47,7 @@
 import Section from "./Section.vue";
 import TaskCreator from "./TaskCreator.vue";
 import SectionCreator from "./SectionCreator.vue"
+import ProjectCreator from "./ProjectCreator.vue"
 import Task from "./Task.vue";
 
 export default {
@@ -105,11 +108,15 @@ export default {
     TaskCreator,
     Task,
     SectionCreator,
+    ProjectCreator,
   },
 };
 </script>
 <style scoped lang="scss">
-.add-task {
+.creators {
   margin: 15px 0;
+  &__btn{
+    margin-right: 15px;
+  }
 }
 </style>

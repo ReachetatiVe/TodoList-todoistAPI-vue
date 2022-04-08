@@ -1,5 +1,5 @@
 <template>
-  <v-app id="inspire">
+  <v-container>
     <v-navigation-drawer v-model="drawer" app>
       <v-list>
         <v-list-item link>Inbox</v-list-item>
@@ -31,10 +31,8 @@
       <v-toolbar-title>Manager</v-toolbar-title>
     </v-app-bar>
 
-    <v-main>
-      <ProjecBrowser v-if="getCurrentProjectId"/>
-    </v-main>
-  </v-app>
+    <ProjecBrowser v-if="getCurrentProjectId" />
+  </v-container>
 </template>
 
 <script>
@@ -63,7 +61,7 @@ export default {
     },
     getCurrentProjectId() {
       return this.$store.getters.GET_CURR_PROJ_ID;
-    }
+    },
   },
 
   mounted() {
@@ -86,16 +84,9 @@ export default {
   // unmounted() {
   //   console.log("ListUnmounted");
   // },
-  methods: {},
   components: {
     Project,
     ProjecBrowser,
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.v-expansion-panel-content__wrap{
-  padding: 0 !important;
-}
-</style>

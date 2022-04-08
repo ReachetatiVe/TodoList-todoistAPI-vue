@@ -1,6 +1,6 @@
 <template>
-    <div>
-    <h1>Create task</h1>
+  <div>
+    <h1>Create section</h1>
     <v-text-field
       label="Section name"
       hide-details="auto"
@@ -39,7 +39,7 @@ export default {
     addSection() {
       this.$store.dispatch("addNewSection", {
         name: this.sectionName,
-        projectId: this.searchProjId()
+        projectId: this.searchProjId(),
       });
     },
     searchProjId() {

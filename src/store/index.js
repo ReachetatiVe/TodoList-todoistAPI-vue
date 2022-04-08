@@ -133,7 +133,7 @@ export default new Vuex.Store({
     },
     GET_COLORS: (state) => {
       return state.colors;
-    }
+    },
   },
   mutations: {
     initialiseStore(state) {
@@ -163,9 +163,11 @@ export default new Vuex.Store({
       else state.sections.push(payload);
     },
     SET_PROJECTS: (state, payload) => {
-      payload.forEach((element) => {
-        state.projects.push(element);
-      });
+      if (Array.isArray(payload))
+        payload.forEach((element) => {
+          state.projects.push(element);
+        });
+      else state.projects.push(payload);
     },
     SET_API: (state, payload) => {
       state.api = payload;
@@ -253,12 +255,28 @@ export default new Vuex.Store({
       )
         return;
       const api = context.state.api;
-
-      api;
       api
         .addSection(sectionInfo)
         .then((section) => {
           context.commit("SET_SECTIONS", section);
+        })
+        .catch((error) => console.log(error));
+    },
+    addNewProject(context, projectInfo) {
+      if (
+        projectInfo === null ||
+        projectInfo === undefined ||
+        projectInfo.name === null ||
+        projectInfo.name === undefined
+      )
+        return;
+      const api = context.state.api;
+
+      api
+        .addProject(projectInfo)
+        .then((project) => {
+          console.log(project);
+          context.commit("SET_PROJECTS", project);
         })
         .catch((error) => console.log(error));
     },
