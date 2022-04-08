@@ -11,6 +11,7 @@
         elevation="2"
         outlined
         small
+        @click="toggleOverlay('edit')"
         >Edit</v-btn
       >
       <v-btn
@@ -19,6 +20,7 @@
         elevation="2"
         outlined
         small
+        @click="toggleOverlay('create')"
         >Add subtask</v-btn
       >
       <v-btn
@@ -39,10 +41,8 @@
         <TaskEntry v-bind:info="subtask" />
       </v-list-item>
     </v-list>
-    <!-- <TaskEntry v-bind:info="subtask" /> -->
-
     <v-overlay :value="showOverlay">
-      <TaskCreator />
+      <TaskCreator v-bind:info="info" v-bind:mode="creatorMode" />
       <v-btn color="success" @click="showOverlay = false"> Hide Overlay </v-btn>
     </v-overlay>
   </div>
@@ -60,6 +60,7 @@ export default {
     return {
       checked: false,
       showOverlay: false,
+      creatorMode: "",
     };
   },
   computed: {
@@ -74,10 +75,15 @@ export default {
         return task.parentId === this.info.id;
       });
     },
+    getCreatorModes() {
+      return this.$store.getters.GET_CREATOR_MODES;
+    },
   },
   methods: {
-    toggleOverlay() {
+    //Open overlay with needed creator mode
+    toggleOverlay(creatorMode) {
       this.showOverlay = !this.showOverlay;
+      this.creatorMode = creatorMode;
     },
   },
   components: {
@@ -88,8 +94,6 @@ export default {
 
 <style lang="scss" scoped>
 .task {
-  // max-width: 75%;
-  // cursor: pointer;
   // .task__header
   &__header {
   }

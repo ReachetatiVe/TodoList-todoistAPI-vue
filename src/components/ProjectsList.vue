@@ -2,9 +2,7 @@
   <v-container>
     <v-navigation-drawer v-model="drawer" app>
       <v-list>
-        <v-list-item link>Inbox</v-list-item>
-        <v-list-item link>Today</v-list-item>
-        <v-list-item link>Upcoming</v-list-item>
+        <v-list-item link>Calendar</v-list-item>
         <v-list-item link>Filters & labels</v-list-item>
       </v-list>
       <v-divider></v-divider>

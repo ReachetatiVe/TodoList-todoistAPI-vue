@@ -10,13 +10,15 @@
       v-model="taskDescription"
       label="Task description"
     ></v-text-field>
-    <v-select
+    <!-- <v-select
+      v-show="showSelects"
       outlined
       v-model="taskProjectName"
       :items="getProjectNames"
       label="Select project"
-    ></v-select>
+    ></v-select> -->
     <v-select
+      v-show="showSelects"
       outlined
       v-model="taskSectionName"
       :items="getSectionsNames"
@@ -29,6 +31,13 @@
 <script>
 export default {
   name: "Task-Creator",
+  props: {
+    //sectionId, parentId for new subtasks
+    //null for new task
+    info: {},
+    mode: String,
+    sections: [],
+  },
   data() {
     return {
       taskContent: "",
@@ -39,24 +48,24 @@ export default {
       sectionsNames: [],
     };
   },
+  mounted() {
+    //create new task
+  },
   computed: {
-    getProjectNames() {
-      this.getProjects.forEach((element) => {
-        this.projectNames.push(element.name);
-      });
-      return this.projectNames;
-    },
-    getProjects() {
-      return this.$store.getters.GET_PROJECTS;
-    },
-    getSectionsNames() {
-      this.getSections.forEach((element) => {
-        this.sectionsNames.push(element.name);
-      });
-      return this.sectionsNames;
-    },
     getSections() {
       return this.$store.getters.GET_SECTIONS;
+    },
+    getSectionsNames() {
+      const tmp = [];
+      this.getSections.forEach((el) => {
+        tmp.push(el.name);
+      });
+      return tmp;
+    },
+    showSelects() {
+      if (this.info === undefined) return true;
+      else if (this.info.parentId === undefined) return true;
+      else return false;
     },
   },
   methods: {
@@ -64,16 +73,9 @@ export default {
       this.$store.dispatch("addNewTask", {
         content: this.taskContent,
         description: this.taskDescription,
-        projectId: this.searchProjId(),
+        // projectId: this.searchProjId(),
         sectionId: this.searchSectionId(),
       });
-    },
-    searchProjId() {
-      let id;
-      this.getProjects.forEach((el) => {
-        if (el.name === this.taskProjectName) id = el.id;
-      });
-      return id;
     },
     searchSectionId() {
       let id;

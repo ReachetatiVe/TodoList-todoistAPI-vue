@@ -10,7 +10,6 @@ export default new Vuex.Store({
     token: "",
     projects: [],
     sections: [],
-    currentProjId: "",
     currentProject: {},
     curProjTasks: [],
     colors: [
@@ -129,10 +128,7 @@ export default new Vuex.Store({
     GET_CURR_PROJ_TASKS: (state) => {
       return state.curProjTasks;
     },
-    GET_CURR_PROJ_ID: (state) => {
-      return state.currentProjId;
-    },
-    GET_CURR_PROJECT: (state) =>{
+    GET_CURR_PROJECT: (state) => {
       return state.currentProject;
     },
     GET_COLORS: (state) => {
@@ -148,9 +144,6 @@ export default new Vuex.Store({
           localStorage.removeItem("token");
         }
       }
-    },
-    SET_CURRENT_PROJECT_ID: (state, payload) => {
-      state.currentProjId = payload;
     },
     SET_CURRENT_PROJECT: (state, payload) => {
       if (payload === null || payload === undefined) return;
@@ -235,7 +228,6 @@ export default new Vuex.Store({
       context.dispatch("getTasksInProject");
     },
     addNewTask(context, taskInfo) {
-      console.log(taskInfo);
       if (
         taskInfo === null ||
         taskInfo === undefined ||
@@ -243,8 +235,8 @@ export default new Vuex.Store({
         taskInfo.content === undefined
       )
         return;
+      taskInfo.projectId = context.state.currentProject.id;
       const api = context.state.api;
-
       api
         .addTask(taskInfo)
         .then((task) => {

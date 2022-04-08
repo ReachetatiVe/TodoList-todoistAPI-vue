@@ -10,9 +10,9 @@
         @click="selectMode(item)"
         >Add {{ item }}</v-btn
       >
-      <TaskCreator v-show="mode === 'task'" />
-      <SectionCreator v-show="mode === 'section'" />
-      <ProjectCreator v-show="mode === 'project'" />
+      <TaskCreator v-if="mode === 'task'" />
+      <SectionCreator v-if="mode === 'section'" />
+      <ProjectCreator v-if="mode === 'project'" />
     </div>
     <h2></h2>
     <div class="text-center d-flex pb-4">
@@ -88,9 +88,6 @@ export default {
     // Reset the panel
     none() {
       this.panel = [];
-    },
-    toggleShowTaskCreator() {
-      this.showTaskCreator = !this.showTaskCreator;
     },
     isWithoutSection(task) {
       if (
