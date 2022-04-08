@@ -1,9 +1,12 @@
 <template>
-  <div>
-    <h3>{{ info.content }}</h3>
-    <p>
+  <div class="task">
+    <h3 class="task__header" @click="toggleOverlay()">{{ info.content }}</h3>
+    <div class="task__description">
       {{ info.description }}
-    </p>
+    </div>
+    <v-overlay :value="showOverlay">
+      <v-btn color="success" @click="showOverlay = false"> Hide Overlay </v-btn>
+    </v-overlay>
   </div>
 </template>
 
@@ -16,6 +19,7 @@ export default {
   data() {
     return {
       checked: false,
+      showOverlay: false,
     };
   },
   computed: {
@@ -27,6 +31,25 @@ export default {
     getTasks() {
       this.$store.dispatch("getTasksInProject");
     },
+    toggleOverlay() {
+      this.showOverlay = !this.showOverlay;
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.task {
+    cursor: pointer;
+		// .task__header
+		&__header {
+
+		}
+
+		// .task__description
+		&__description {
+      max-width: 75%;
+		}
+}
+
+</style>

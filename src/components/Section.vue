@@ -5,7 +5,7 @@
     >
     <v-expansion-panel-content>
       <h3>List of tasks</h3>
-      <v-list>
+      <v-list dense>
         <v-list-item v-for="task in getTasksInThisSections" :key="task.id">
           <Task v-bind:info="task" />
         </v-list-item>

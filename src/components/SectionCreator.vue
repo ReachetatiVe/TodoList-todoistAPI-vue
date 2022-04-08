@@ -11,7 +11,7 @@
       :items="getProjectNames"
       label="Select project"
     ></v-select>
-    <v-btn @click="addSection">Окей, збс</v-btn>
+    <v-btn @click="addSection">Ok</v-btn>
   </div>
 </template>
 <script>

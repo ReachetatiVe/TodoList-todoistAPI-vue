@@ -20,7 +20,7 @@
       :items="getSectionsNames"
       label="Select section"
     ></v-select>
-    <v-btn @click="addTask">Окей, збс</v-btn>
+    <v-btn @click="addTask">Ok</v-btn>
   </div>
 </template>
 

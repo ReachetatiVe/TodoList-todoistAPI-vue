@@ -11,6 +11,7 @@ export default new Vuex.Store({
     projects: [],
     sections: [],
     currentProjId: "",
+    currentProject: {},
     curProjTasks: [],
     colors: [
       {
@@ -131,6 +132,9 @@ export default new Vuex.Store({
     GET_CURR_PROJ_ID: (state) => {
       return state.currentProjId;
     },
+    GET_CURR_PROJECT: (state) =>{
+      return state.currentProject;
+    },
     GET_COLORS: (state) => {
       return state.colors;
     },
@@ -147,6 +151,10 @@ export default new Vuex.Store({
     },
     SET_CURRENT_PROJECT_ID: (state, payload) => {
       state.currentProjId = payload;
+    },
+    SET_CURRENT_PROJECT: (state, payload) => {
+      if (payload === null || payload === undefined) return;
+      state.currentProject = payload;
     },
     SET_CURR_PROJ_TASKS: (state, payload) => {
       if (Array.isArray(payload))
@@ -206,7 +214,7 @@ export default new Vuex.Store({
       context.commit("CLEAR_SECTIONS");
       const api = context.state.api;
       api
-        .getSections(context.state.currentProjId)
+        .getSections(context.state.currentProject.id)
         .then((sections) => {
           context.commit("SET_SECTIONS", sections);
         })
@@ -216,7 +224,7 @@ export default new Vuex.Store({
       context.commit("CLEAR_CURR_PROJ_TASKS");
       const api = context.state.api;
       api
-        .getTasks({ project_id: context.state.currentProjId })
+        .getTasks({ project_id: context.state.currentProject.id })
         .then((tasks) => {
           context.commit("SET_CURR_PROJ_TASKS", tasks);
         })

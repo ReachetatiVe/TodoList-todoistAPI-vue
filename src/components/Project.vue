@@ -23,13 +23,12 @@ export default {
       this.$store.getters.GET_COLORS.forEach((element) => {
         if (element.id === this.info.color) color = element.hex;
       });
-      console.log(color);
       return color;
     },
   },
   methods: {
     makeProjectCurrent() {
-      this.$store.commit("SET_CURRENT_PROJECT_ID", this.info.id);
+      this.$store.commit("SET_CURRENT_PROJECT", this.info);
       this.$store.dispatch("getCurrentProjInfo");
     },
   },

@@ -15,7 +15,7 @@
       min-width="200"
     >
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="secondary" dark v-bind="attrs" v-on="on">
+        <v-btn  class="project-creator__menu-btn" color="secondary" dark v-bind="attrs" v-on="on">
           <div class="project-creator__color-item">
             <p>Pick color</p>
             <span
@@ -43,7 +43,9 @@
         </v-list-item>
       </v-list>
     </v-menu>
-    <v-btn @click="addProject()">Окей, збс</v-btn>
+    <div>
+      <v-btn @click="addProject()">Ok</v-btn>
+    </div>
   </div>
 </template>
 <script>
@@ -106,6 +108,9 @@ export default {
     }
   }
   &__text-filed {
+    margin-bottom: 15px;
+  }
+  &__menu-btn{
     margin-bottom: 15px;
   }
 }

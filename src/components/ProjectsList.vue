@@ -31,7 +31,7 @@
       <v-toolbar-title>Manager</v-toolbar-title>
     </v-app-bar>
 
-    <ProjecBrowser v-if="getCurrentProjectId" />
+    <ProjecBrowser v-if="getCurrentProject" />
   </v-container>
 </template>
 
@@ -59,8 +59,8 @@ export default {
     getProjects() {
       return this.$store.getters.GET_PROJECTS;
     },
-    getCurrentProjectId() {
-      return this.$store.getters.GET_CURR_PROJ_ID;
+    getCurrentProject() {
+      return this.$store.getters.GET_CURR_PROJECT;
     },
   },
 
