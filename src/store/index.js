@@ -204,7 +204,6 @@ export default new Vuex.Store({
         })
         .catch((error) => console.log(error));
     },
-    //! Повторение кода
     getAllSections(context) {
       context.commit("CLEAR_SECTIONS");
       const api = context.state.api;
@@ -226,21 +225,6 @@ export default new Vuex.Store({
         })
         .catch((error) => console.log(error));
     },
-
-    getTasksInProject(context) {
-      context.commit("CLEAR_CURR_PROJ_TASKS");
-      const api = context.state.api;
-      api
-        .getTasks({ project_id: context.state.currentProject.id })
-        .then((tasks) => {
-          context.commit("SET_CURR_PROJ_TASKS", tasks);
-        })
-        .catch((error) => console.log(error));
-    },
-    getCurrentProjInfo(context) {
-      context.dispatch("getAllSections");
-      context.dispatch("getTasksInProject");
-    },
     getAllInfo(context) {
       context.dispatch("getAllProjects");
       context.dispatch("getAllSections");
@@ -259,7 +243,7 @@ export default new Vuex.Store({
       api
         .addTask(taskInfo)
         .then((task) => {
-          context.commit("SET_CURR_PROJ_TASKS", task);
+          context.commit("SET_TASKS", task);
         })
         .catch((error) => console.log(error));
     },
