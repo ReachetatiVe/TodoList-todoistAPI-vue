@@ -126,7 +126,7 @@ export default new Vuex.Store({
     GET_SECTIONS: (state) => {
       return state.sections;
     },
-    GET_TASKS: (state)=>{
+    GET_TASKS: (state) => {
       return state.tasks;
     },
     GET_CURR_PROJECT: (state) => {
@@ -181,6 +181,13 @@ export default new Vuex.Store({
       state.token = payload;
       localStorage.setItem("token", payload);
     },
+    //! рекурсивное удаление
+    DELETE_TASK: (state, payload) => {
+      //просто удаляет задачу по id в массиве
+      state.tasks = state.tasks.filter((el) => {
+        return el.id !== payload.id;
+      });
+    },
     CLEAR_SECTIONS: (state) => {
       state.sections = [];
     },
@@ -231,6 +238,7 @@ export default new Vuex.Store({
       context.dispatch("getAllTasks");
     },
     addNewTask(context, taskInfo) {
+      console.log(taskInfo);
       if (
         taskInfo === null ||
         taskInfo === undefined ||
@@ -281,6 +289,41 @@ export default new Vuex.Store({
           context.commit("SET_PROJECTS", project);
         })
         .catch((error) => console.log(error));
+    },
+    deleteTask(context, taskInfo) {
+      if (
+        taskInfo.id === null ||
+        taskInfo.id === undefined ||
+        taskInfo.id === ""
+      )
+        return;
+      const api = context.state.api;
+      api
+        .deleteTask(taskInfo.id)
+        .then((isSuccess) => {
+          if (isSuccess) {
+            let tasksFromParentSection = context.state.tasks.filter((el) => {
+              return el.sectionId === taskInfo.sectionId;
+            });
+            context.dispatch("deleteTasksChildren", {
+              items: tasksFromParentSection,
+              item: taskInfo,
+            });
+          }
+        })
+        .catch((error) => console.log(error));
+    },
+    deleteTasksChildren(context, payload) {
+      let items = payload.items;
+      let item = payload.item;
+      if (item.parentdId) {
+        items = context.dispatch("deleteTasksChildren", {
+          items: items,
+          item: item[item.parentId],
+        });
+      }
+      context.commit("DELETE_TASK", item);
+      return items;
     },
   },
   modules: {},

@@ -106,12 +106,8 @@ export default {
       else this.editTask();
     },
     addTask() {
-      this.$store.dispatch("addNewTask", {
-        content: this.taskContent,
-        description: this.taskDescription,
-        sectionId: this.getSectionId(),
-        parent_id: this.info.id,
-      });
+      console.log(this.getInfo());
+      this.$store.dispatch("addNewTask", this.getInfo());
     },
     editTask() {
       console.log("Edit Task");
@@ -119,6 +115,7 @@ export default {
     },
     getSectionId() {
       if (
+        this.info === undefined ||
         this.info.sectionId === "" ||
         this.info.sectionId === undefined ||
         this.info.sectionId === null
@@ -127,19 +124,49 @@ export default {
       else return this.info.sectionId;
     },
     searchSectionId() {
-      let id;
+      let id = -1;
       this.getSections.forEach((el) => {
         if (el.name === this.taskSectionName) id = el.id;
       });
       return id;
     },
     searchProjId() {
-      let id;
+      let id = null;
       this.getProjects.forEach((el) => {
         if (el.name === this.taskProjectName) id = el.id;
       });
-      console.log("searchProjId " + id);
       return id;
+    },
+    getParentId() {
+      if (this.info === undefined || this.info.id === undefined)
+        return -1;
+      else return this.info.id;
+    },
+    getInfo() {
+      if (this.searchSectionId() !== -1 && this.getParentId() !== -1)
+        return {
+          content: this.taskContent,
+          description: this.taskDescription,
+          sectionId: this.getSectionId(),
+          parent_id: this.getParentId(),
+        };
+      if (this.searchSectionId() !== -1 && this.getParentId() === -1)
+        return {
+          content: this.taskContent,
+          description: this.taskDescription,
+          sectionId: this.getSectionId(),
+        };
+      if (this.searchSectionId() === -1 && this.getParentId() !== -1)
+        return {
+          content: this.taskContent,
+          description: this.taskDescription,
+          parent_id: this.getParentId(),
+        };
+      if (this.searchSectionId() === -1 && this.getParentId() === -1)
+        return {
+          content: this.taskContent,
+          description: this.taskDescription,
+        };
     },
   },
 };

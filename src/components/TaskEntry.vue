@@ -29,6 +29,7 @@
         elevation="2"
         outlined
         small
+        @click="deleteTask()"
         >Delete</v-btn
       >
     </div>
@@ -85,6 +86,10 @@ export default {
     },
   },
   methods: {
+    deleteTask() {
+      this.$store.dispatch("deleteTask", this.info);
+    },
+
     //Open overlay with needed creator mode
     toggleOverlay(creatorMode) {
       this.showOverlay = !this.showOverlay;
