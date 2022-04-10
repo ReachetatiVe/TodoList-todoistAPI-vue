@@ -14,6 +14,8 @@ export default new Vuex.Store({
     tasksInCurrentSection: [],
     currentProject: {},
     selectedProject: {},
+    selectedTasks: [],
+    closedTasks: [],
     colors: [
       {
         id: 30,
@@ -139,6 +141,12 @@ export default new Vuex.Store({
     GET_COLORS: (state) => {
       return state.colors;
     },
+    GET_SELECTED_TASKS: (state) => {
+      return state.selectedTasks;
+    },
+    GET_CLOSED_TASKS: (state) => {
+      return state.closedTasks;
+    },
   },
   mutations: {
     initialiseStore(state) {
@@ -175,6 +183,18 @@ export default new Vuex.Store({
         });
       else state.tasksInCurrentSection.push(payload);
     },
+    SET_TASK_TO_SELECTED: (state, payload) => {
+      console.log("setSelected");
+      console.log(payload);
+      if (Array.isArray(payload))
+        payload.forEach((element) => {
+          state.selectedTasks.push(element);
+        });
+      else state.selectedTasks.push(payload);
+    },
+    SET_TASK_TO_CLOSED: (state, payload) => {
+      state.closedTasks.push(payload);
+    },
     SET_PROJECTS: (state, payload) => {
       if (Array.isArray(payload))
         payload.forEach((element) => {
@@ -194,6 +214,16 @@ export default new Vuex.Store({
       //просто удаляет задачу по id в массиве
       state.tasks = state.tasks.filter((el) => {
         return el.id !== payload.id;
+      });
+    },
+    DELETE_TASK_FROM_SELECTED: (state, payload) => {
+      state.selectedTasks = state.selectedTasks.filter((el) => {
+        return el.id !== payload.id;
+      });
+    },
+    DELETE_TASK_FROM_CLOSED: (state, payload) => {
+      state.closedTasks = state.closedTasks.filter((el) => {
+        return el !== payload;
       });
     },
     CLEAR_SECTIONS: (state) => {
@@ -249,6 +279,19 @@ export default new Vuex.Store({
         .getTasks()
         .then((tasks) => {
           context.commit("SET_TASKS_IN_CURRENT_SECTION", tasks);
+        })
+        .catch((error) => console.log(error));
+    },
+    getTaskById(context, taskId) {
+      console.log("getTaskByID ДО ЗАПРОСА");
+      console.log("taskID: " + taskId);
+      const api = context.state.api;
+      api
+        .getTask(taskId)
+        .then((task) => {
+          console.log("getTaskByID внутри колбэка");
+          console.log(task);
+          context.commit("SET_TASKS", task);
         })
         .catch((error) => console.log(error));
     },
@@ -352,19 +395,67 @@ export default new Vuex.Store({
     updateTask(context, task) {
       console.log("Action: updateTask");
       console.log(task);
-      if (
-        task.id === null ||
-        task.id === undefined ||
-        task.id === ""
-      )
-        return;
+      if (task.id === null || task.id === undefined || task.id === "") return;
       const api = context.state.api;
       api
         .updateTask(task.id, task.info)
         .then((isSuccess) => {
           if (isSuccess) {
-            console.log(isSuccess);
+            context.commit("DELETE_TASK", { id: task.id });
+            context.dispatch("getTaskById", task.id);
+            // context.commit("DELETE_TASK_ID_FROM_CLOSED", taskId);
+            // console.log(isSuccess);
+            // context.dispatch("getAllTasks");
+          }
+        })
+        .catch((error) => console.log(error));
+    },
+    //! А че не синхронно? Слишком много раз грузит задачи, в update, reopen тоже
+    closeTasks(context) {
+      if (
+        context.state.selectedTasks === null ||
+        context.state.selectedTasks.length < 1
+      )
+        return;
+      context.state.selectedTasks.forEach((element) => {
+        context.dispatch("closeTask", element);
+      });
+    },
+    closeTask(context, task) {
+      const api = context.state.api;
+      api
+        .closeTask(task.id)
+        .then((isSuccess) => {
+          if (isSuccess) {
+            context.commit("DELETE_TASK_FROM_SELECTED", task);
+            context.state.tasks.forEach((el) => {
+              if (el.id === task.id) {
+                el.completed = true;
+                //Удалить если корневая, закрыть если subtask
+                if (task.parentId === undefined || task.parentId === null)
+                  context.dispatch("deleteTask", task);
+                else context.commit("SET_TASK_TO_CLOSED", task)
+              }
+            });
+          }
+        })
+        .catch((error) => console.log(error));
+    },
+    reopenTasks(context) {
+      context.state.closedTasks.forEach((el) => {
+        context.dispatch("reopenTask", el);
+      });
+    },
+    reopenTask(context, taskId) {
+      const api = context.state.api;
+      api
+        .reopenTask(taskId)
+        .then((isSuccess) => {
+          if (isSuccess) {
+            // context.dispatch("")
             context.dispatch("getAllTasks");
+            context.commit("DELETE_TASK_ID_FROM_CLOSED", taskId);
+            // context.dispatch("getTaskById", taskId);
           }
         })
         .catch((error) => console.log(error));

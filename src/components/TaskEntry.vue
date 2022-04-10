@@ -1,8 +1,18 @@
 <template>
   <div class="task">
-    <h3 class="task__header">{{ info.content }}</h3>
+    <div class="task__header" @click.stop="addTaskIdToSelected()">
+      <v-checkbox v-model="checkbox">
+        <template v-slot:label>
+          <h3>{{ info.content }}</h3>
+        </template>
+      </v-checkbox>
+    </div>
+
     <div class="task__description">
       {{ info.description }}
+    </div>
+    <div class="task__date" v-if="hasDate">
+      {{info.due.date}}
     </div>
     <div class="tasks__managament-btns">
       <v-btn
@@ -62,9 +72,14 @@ export default {
       checked: false,
       showOverlay: false,
       creatorMode: "",
+      checkbox: false,
     };
   },
   computed: {
+    hasDate(){
+      if (this.info.due === undefined || this.info.due.date === undefined || this.info.due.date === null) return false
+      else return true;
+    },
     getSections() {
       return this.$store.getters.GET_SECTIONS;
     },
@@ -95,6 +110,11 @@ export default {
       this.showOverlay = !this.showOverlay;
       this.creatorMode = creatorMode;
     },
+
+    addTaskIdToSelected() {
+      if (this.checkbox === true) this.$store.commit("SET_TASK_TO_SELECTED", this.info);
+      else this.$store.commit("DELETE_TASK_FROM_SELECTED", this.info);
+    },
   },
   components: {
     TaskCreator,
@@ -106,6 +126,7 @@ export default {
 .task {
   // .task__header
   &__header {
+    cursor: pointer;
   }
 
   // .task__description

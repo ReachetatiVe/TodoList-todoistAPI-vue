@@ -17,7 +17,7 @@
       :items="getSectionsNames"
       label="Select section"
     ></v-select>
-    <div class="another-project-picker" v-if="getMode === 'edit'">
+    <!-- <div class="another-project-picker" v-if="getMode === 'edit'">
       <v-select
         outlined
         v-model="taskProjectName"
@@ -31,7 +31,13 @@
         :items="getSectionsNames"
         label="Select section"
       ></v-select>
-    </div>
+    </div> -->
+    <v-row justify="center">
+    <v-date-picker
+      v-model="date"
+      class="mt-4"
+    ></v-date-picker>
+  </v-row>
     <v-btn color="success" @click="confirmTask()">Ok</v-btn>
   </div>
 </template>
@@ -48,6 +54,7 @@ export default {
   },
   data() {
     return {
+      date: "",
       taskContent: "",
       taskDescription: "",
       taskProjectName: "",
@@ -64,17 +71,10 @@ export default {
       return this.$store.getters.GET_SECTIONS;
     },
     getFilteredSections() {
-      if (this.mode === "create") {
-        console.log("CreateMode");
-        return this.getSections.filter((el) => {
-          return el.projectId === this.getCurrentProject.id;
-        });
-      } else {
-        console.log("EditMode");
-        return this.$store.getters.GET_SECTIONS.filter((el) => {
-          return el.projectId === this.searchProjId();
-        });
-      }
+      console.log("CreateMode");
+      return this.getSections.filter((el) => {
+        return el.projectId === this.getCurrentProject.id;
+      });
     },
     getMode() {
       return this.mode;
@@ -101,40 +101,18 @@ export default {
       return tmp;
     },
     getParentId() {
-      //Либо оставить подзадачу как есть и менять только текст/дату
-      //Либо переназначить на другой проект, как просто задачу (как в todoist)
-      //sectionId, parentId for new subtasks
-      //null for new task (not subtask)
-      if (this.info === undefined) return -1;
-      if (this.mode === "edit") {
-        //отдаем в info задачу для изменения
-        //Если у задачи есть родитель вернуть его
-        if (this.info.parentId === undefined) return -1;
-        else return this.info.parentId;
-      } //Если create то parentId = id
-      else if (this.info.id === undefined) return -1;
+      if (this.info === undefined || this.info.id === undefined) return -1;
       else return this.info.id;
     },
     getSectionId() {
-      //При изменениий задачи
-      //
-      if (this.mode === "create") {
-        console.log("getSectionId CREATE");
-        if (
-          this.info === undefined ||
-          this.info.sectionId === "" ||
-          this.info.sectionId === undefined ||
-          this.info.sectionId === null
-        )
-          return this.searchSectionId();
-        else return this.info.sectionId;
-      } //Если mode = "edit" и имя в селекте не менялось, то оставить секцию исходной
-      else {
-        console.log("getSectionId EDITOR");
-        if (this.taskSectionName === "") return this.info.sectionId;
-        //А если изменилось то найти по имени в select
-        else return this.searchSectionId();
-      }
+      if (
+        this.info === undefined ||
+        this.info.sectionId === "" ||
+        this.info.sectionId === undefined ||
+        this.info.sectionId === null
+      )
+        return this.searchSectionId();
+      else return this.info.sectionId;
     },
   },
   methods: {
@@ -161,6 +139,7 @@ export default {
       return id;
     },
     searchProjId() {
+      //Ищет id проекта по имени из select
       let id = null;
       this.getProjects.forEach((el) => {
         if (el.name === this.taskProjectName) id = el.id;
@@ -169,30 +148,14 @@ export default {
     },
 
     getInfo() {
-      if (this.getSectionId !== -1 && this.getParentId !== -1)
-        return {
-          content: this.taskContent,
-          description: this.taskDescription,
-          sectionId: this.getSectionId,
-          parent_id: this.getParentId,
-        };
-      if (this.getSectionId !== -1 && this.getParentId === -1)
-        return {
-          content: this.taskContent,
-          description: this.taskDescription,
-          sectionId: this.getSectionId,
-        };
-      if (this.getSectionId === -1 && this.getParentId !== -1)
-        return {
-          content: this.taskContent,
-          description: this.taskDescription,
-          parent_id: this.getParentId,
-        };
-      if (this.getSectionId === -1 && this.getParentId === -1)
-        return {
-          content: this.taskContent,
-          description: this.taskDescription,
-        };
+      const InfoObj = {
+        content: this.taskContent,
+        description: this.taskDescription,
+      };
+      if (this.getSectionId !== -1) InfoObj.sectionId = this.getSectionId;
+      if (this.getParentId !== -1) InfoObj.parentId = this.getParentId;
+      if (this.data !=="" || this.data !== null || this.data !== undefined) InfoObj.due_date = this.date;
+      return InfoObj;
     },
   },
 };

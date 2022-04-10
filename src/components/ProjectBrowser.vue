@@ -11,6 +11,22 @@
           @click="selectMode(item)"
           >Add {{ item }}</v-btn
         >
+        <v-btn
+          v-show="getSelectedTasks.length > 0"
+          color="error"
+          large
+          class="creators__btn"
+          @click="closeTasks()"
+          >Close tasks</v-btn
+        >
+        <v-btn
+          v-show="getClosedTasks.length > 0"
+          color="warning"
+          large
+          class="creators__btn"
+          @click="reopenTasks()"
+          >Reopen tasks</v-btn
+        >
       </div>
       <TaskCreator v-if="mode === 'task'" v-bind:mode="'create'" />
       <SectionCreator v-if="mode === 'section'" />
@@ -86,6 +102,13 @@ export default {
         );
       });
     },
+    getSelectedTasks(){
+      return this.$store.getters.GET_SELECTED_TASKS;
+    },
+    getClosedTasks(){
+      return this.$store.getters.GET_CLOSED_TASKS;
+    }
+
   },
   methods: {
     all() {
@@ -110,6 +133,13 @@ export default {
       if (this.mode === value) this.mode = "";
       else this.mode = value;
     },
+
+    closeTasks(){
+      this.$store.dispatch("closeTasks");
+    },
+    reopenTasks(){
+      this.$store.dispatch("reopenTasks");
+    }
   },
   components: {
     Section,
@@ -117,6 +147,9 @@ export default {
     TaskEntry,
     SectionCreator,
     ProjectCreator,
+  },
+  mounted() {
+    this.mode = "";
   },
 };
 </script>
