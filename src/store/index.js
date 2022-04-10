@@ -236,6 +236,7 @@ export default new Vuex.Store({
       api
         .getTasks()
         .then((tasks) => {
+          console.log("ACTION: get all tasks");
           context.commit("SET_TASKS", tasks);
         })
         .catch((error) => console.log(error));
@@ -348,24 +349,25 @@ export default new Vuex.Store({
       context.commit("DELETE_TASK", item);
       return items;
     },
-    updateTask(context, taskInfo) {
+    updateTask(context, task) {
       console.log("Action: updateTask");
-      console.log(taskInfo);
-      // if (
-      //   taskInfo.id === null ||
-      //   taskInfo.id === undefined ||
-      //   taskInfo.id === ""
-      // )
-      //   return;
-      // const api = context.state.api;
-      // api
-      //   .updateTask( taskInfo.id, { content: "Buy Coffee" })
-      //   .then((isSuccess) => {
-      //     if (isSuccess) {
-      //       context.dispatch("getAllTasks");
-      //     }
-      //   })
-      //   .catch((error) => console.log(error));
+      console.log(task);
+      if (
+        task.id === null ||
+        task.id === undefined ||
+        task.id === ""
+      )
+        return;
+      const api = context.state.api;
+      api
+        .updateTask(task.id, task.info)
+        .then((isSuccess) => {
+          if (isSuccess) {
+            console.log(isSuccess);
+            context.dispatch("getAllTasks");
+          }
+        })
+        .catch((error) => console.log(error));
     },
   },
   modules: {},

@@ -112,18 +112,29 @@ export default {
         if (this.info.parentId === undefined) return -1;
         else return this.info.parentId;
       } //Если create то parentId = id
-       else if (this.info.id === undefined) return -1;
+      else if (this.info.id === undefined) return -1;
       else return this.info.id;
     },
     getSectionId() {
-      if (
-        this.info === undefined ||
-        this.info.sectionId === "" ||
-        this.info.sectionId === undefined ||
-        this.info.sectionId === null
-      )
-        return this.searchSectionId();
-      else return this.info.sectionId;
+      //При изменениий задачи
+      //
+      if (this.mode === "create") {
+        console.log("getSectionId CREATE");
+        if (
+          this.info === undefined ||
+          this.info.sectionId === "" ||
+          this.info.sectionId === undefined ||
+          this.info.sectionId === null
+        )
+          return this.searchSectionId();
+        else return this.info.sectionId;
+      } //Если mode = "edit" и имя в селекте не менялось, то оставить секцию исходной
+      else {
+        console.log("getSectionId EDITOR");
+        if (this.taskSectionName === "") return this.info.sectionId;
+        //А если изменилось то найти по имени в select
+        else return this.searchSectionId();
+      }
     },
   },
   methods: {
@@ -135,18 +146,14 @@ export default {
       this.$store.dispatch("addNewTask", this.getInfo());
     },
     editTask() {
-      //Либо оставить подзадачу как есть и менять только текст/дату
-      //Либо переназначить на другой проект, как просто задачу
-      console.log("Edit Task");
-      console.log(this.info);
-      // передать id и taskInfo отдельно
-      // this.$store.dispatch("updateTask", {
-      //   id: this.info.id,
-      //   info: this.getInfo(),
-      // });
+      this.$store.dispatch("updateTask", {
+        id: this.info.id,
+        info: this.getInfo(),
+      });
     },
 
     searchSectionId() {
+      //Ищет id секции по имени из select
       let id = -1;
       this.getSections.forEach((el) => {
         if (el.name === this.taskSectionName) id = el.id;
@@ -162,26 +169,26 @@ export default {
     },
 
     getInfo() {
-      if (this.searchSectionId() !== -1 && this.getParentId !== -1)
+      if (this.getSectionId !== -1 && this.getParentId !== -1)
         return {
           content: this.taskContent,
           description: this.taskDescription,
           sectionId: this.getSectionId,
           parent_id: this.getParentId,
         };
-      if (this.searchSectionId() !== -1 && this.getParentId === -1)
+      if (this.getSectionId !== -1 && this.getParentId === -1)
         return {
           content: this.taskContent,
           description: this.taskDescription,
           sectionId: this.getSectionId,
         };
-      if (this.searchSectionId() === -1 && this.getParentId !== -1)
+      if (this.getSectionId === -1 && this.getParentId !== -1)
         return {
           content: this.taskContent,
           description: this.taskDescription,
           parent_id: this.getParentId,
         };
-      if (this.searchSectionId() === -1 && this.getParentId === -1)
+      if (this.getSectionId === -1 && this.getParentId === -1)
         return {
           content: this.taskContent,
           description: this.taskDescription,
