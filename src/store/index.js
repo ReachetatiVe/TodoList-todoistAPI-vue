@@ -15,7 +15,7 @@ export default new Vuex.Store({
     currentProject: {},
     selectedProject: {},
     selectedTasks: [],
-    closedTasks: [],
+    hasClosedTasks: false,
     colors: [
       {
         id: 30,
@@ -144,8 +144,8 @@ export default new Vuex.Store({
     GET_SELECTED_TASKS: (state) => {
       return state.selectedTasks;
     },
-    GET_CLOSED_TASKS: (state) => {
-      return state.closedTasks;
+    GET_HAS_CLOSED_TASKS: (state) => {
+      return state.hasClosedTasks;
     },
   },
   mutations: {
@@ -192,8 +192,8 @@ export default new Vuex.Store({
         });
       else state.selectedTasks.push(payload);
     },
-    SET_TASK_TO_CLOSED: (state, payload) => {
-      state.closedTasks.push(payload);
+    SET_HAS_CLOSED_TASKS: (state, payload) => {
+      state.hasClosedTasks = payload;
     },
     SET_PROJECTS: (state, payload) => {
       if (Array.isArray(payload))
@@ -219,11 +219,6 @@ export default new Vuex.Store({
     DELETE_TASK_FROM_SELECTED: (state, payload) => {
       state.selectedTasks = state.selectedTasks.filter((el) => {
         return el.id !== payload.id;
-      });
-    },
-    DELETE_TASK_FROM_CLOSED: (state, payload) => {
-      state.closedTasks = state.closedTasks.filter((el) => {
-        return el !== payload;
       });
     },
     CLEAR_SECTIONS: (state) => {
@@ -427,35 +422,30 @@ export default new Vuex.Store({
         .closeTask(task.id)
         .then((isSuccess) => {
           if (isSuccess) {
+            context.commit("SET_HAS_CLOSED_TASKS", true);
             context.commit("DELETE_TASK_FROM_SELECTED", task);
-            context.state.tasks.forEach((el) => {
-              if (el.id === task.id) {
-                el.completed = true;
-                //Удалить если корневая, закрыть если subtask
-                if (task.parentId === undefined || task.parentId === null)
-                  context.dispatch("deleteTask", task);
-                else context.commit("SET_TASK_TO_CLOSED", task)
-              }
-            });
+            if (task.parentId === undefined || task.parentId === null)
+              context.dispatch("deleteTask", task);
+            else task.completed = true;
           }
         })
         .catch((error) => console.log(error));
     },
     reopenTasks(context) {
-      context.state.closedTasks.forEach((el) => {
-        context.dispatch("reopenTask", el);
+      context.state.tasks.forEach((el) => {
+        if (el.completed === true) {
+          context.dispatch("reopenTask", el);
+        }
       });
     },
-    reopenTask(context, taskId) {
+    reopenTask(context, task) {
       const api = context.state.api;
       api
-        .reopenTask(taskId)
+        .reopenTask(task.id)
         .then((isSuccess) => {
           if (isSuccess) {
-            // context.dispatch("")
-            context.dispatch("getAllTasks");
-            context.commit("DELETE_TASK_ID_FROM_CLOSED", taskId);
-            // context.dispatch("getTaskById", taskId);
+            context.commit("SET_HAS_CLOSED_TASKS", false);
+            task.completed = false;
           }
         })
         .catch((error) => console.log(error));

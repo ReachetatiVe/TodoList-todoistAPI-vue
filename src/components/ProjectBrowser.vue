@@ -20,7 +20,7 @@
           >Close tasks</v-btn
         >
         <v-btn
-          v-show="getClosedTasks.length > 0"
+          v-show="getHasClosedTasks"
           color="warning"
           large
           class="creators__btn"
@@ -105,8 +105,8 @@ export default {
     getSelectedTasks(){
       return this.$store.getters.GET_SELECTED_TASKS;
     },
-    getClosedTasks(){
-      return this.$store.getters.GET_CLOSED_TASKS;
+    getHasClosedTasks(){
+      return this.$store.getters.GET_HAS_CLOSED_TASKS;
     }
 
   },
