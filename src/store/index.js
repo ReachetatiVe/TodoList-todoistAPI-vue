@@ -11,6 +11,7 @@ export default new Vuex.Store({
     projects: [],
     sections: [],
     tasks: [],
+    tasksInCurrentSection: [],
     currentProject: {},
     selectedProject: {},
     colors: [
@@ -167,6 +168,13 @@ export default new Vuex.Store({
         });
       else state.tasks.push(payload);
     },
+    SET_TASKS_IN_CURRENT_SECTION: (state, payload) => {
+      if (Array.isArray(payload))
+        payload.forEach((element) => {
+          state.tasksInCurrentSection.push(element);
+        });
+      else state.tasksInCurrentSection.push(payload);
+    },
     SET_PROJECTS: (state, payload) => {
       if (Array.isArray(payload))
         payload.forEach((element) => {
@@ -226,9 +234,20 @@ export default new Vuex.Store({
       context.state.tasks = [];
       const api = context.state.api;
       api
-        .getTasks({ project_id: context.state.currentProject.id })
+        .getTasks()
         .then((tasks) => {
           context.commit("SET_TASKS", tasks);
+        })
+        .catch((error) => console.log(error));
+    },
+    getTasksInSection(context, sectionId) {
+      if (sectionId === null || sectionId === undefined) return;
+      context.state.tasksInCurrentSection = [];
+      const api = context.state.api;
+      api
+        .getTasks()
+        .then((tasks) => {
+          context.commit("SET_TASKS_IN_CURRENT_SECTION", tasks);
         })
         .catch((error) => console.log(error));
     },
@@ -238,6 +257,7 @@ export default new Vuex.Store({
       context.dispatch("getAllTasks");
     },
     addNewTask(context, taskInfo) {
+      console.log("Add new task info (store):");
       console.log(taskInfo);
       if (
         taskInfo === null ||
@@ -251,6 +271,8 @@ export default new Vuex.Store({
       api
         .addTask(taskInfo)
         .then((task) => {
+          console.log("taskfrom server (store):");
+          console.log(task);
           context.commit("SET_TASKS", task);
         })
         .catch((error) => console.log(error));
@@ -301,6 +323,7 @@ export default new Vuex.Store({
       api
         .deleteTask(taskInfo.id)
         .then((isSuccess) => {
+          // if (isSuccess) context.dispatch("getAllTasks");
           if (isSuccess) {
             let tasksFromParentSection = context.state.tasks.filter((el) => {
               return el.sectionId === taskInfo.sectionId;
@@ -324,6 +347,25 @@ export default new Vuex.Store({
       }
       context.commit("DELETE_TASK", item);
       return items;
+    },
+    updateTask(context, taskInfo) {
+      console.log("Action: updateTask");
+      console.log(taskInfo);
+      // if (
+      //   taskInfo.id === null ||
+      //   taskInfo.id === undefined ||
+      //   taskInfo.id === ""
+      // )
+      //   return;
+      // const api = context.state.api;
+      // api
+      //   .updateTask( taskInfo.id, { content: "Buy Coffee" })
+      //   .then((isSuccess) => {
+      //     if (isSuccess) {
+      //       context.dispatch("getAllTasks");
+      //     }
+      //   })
+      //   .catch((error) => console.log(error));
     },
   },
   modules: {},

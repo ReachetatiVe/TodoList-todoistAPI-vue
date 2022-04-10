@@ -11,7 +11,7 @@
       label="Task description"
     ></v-text-field>
     <v-select
-      v-if="getMode === 'create'"
+      v-if="getMode === 'create' && getParentId === -1"
       outlined
       v-model="taskSectionName"
       :items="getSectionsNames"
@@ -65,19 +65,29 @@ export default {
     },
     getFilteredSections() {
       if (this.mode === "create") {
-        console.log("CreateMod");
+        console.log("CreateMode");
         return this.getSections.filter((el) => {
           return el.projectId === this.getCurrentProject.id;
         });
       } else {
-        console.log("EditMod");
+        console.log("EditMode");
         return this.$store.getters.GET_SECTIONS.filter((el) => {
           return el.projectId === this.searchProjId();
         });
       }
     },
+    getMode() {
+      return this.mode;
+    },
+    getCurrentProject() {
+      return this.$store.getters.GET_CURR_PROJECT;
+    },
+    getSelectedProject() {
+      return this.$store.getters.GET_SELECTED_PROJECT;
+    },
     getSectionsNames() {
       const tmp = [];
+      tmp.push("None");
       this.getFilteredSections.forEach((el) => {
         tmp.push(el.name);
       });
@@ -90,28 +100,20 @@ export default {
       });
       return tmp;
     },
-    getMode() {
-      return this.mode;
-    },
-    getCurrentProject() {
-      return this.$store.getters.GET_CURR_PROJECT;
-    },
-    getSelectedProject() {
-      return this.$store.getters.GET_SELECTED_PROJECT;
-    },
-  },
-  methods: {
-    confirmTask() {
-      if (this.mode === "create") this.addTask();
-      else this.editTask();
-    },
-    addTask() {
-      console.log(this.getInfo());
-      this.$store.dispatch("addNewTask", this.getInfo());
-    },
-    editTask() {
-      console.log("Edit Task");
-      //Запрос на update
+    getParentId() {
+      //Либо оставить подзадачу как есть и менять только текст/дату
+      //Либо переназначить на другой проект, как просто задачу (как в todoist)
+      //sectionId, parentId for new subtasks
+      //null for new task (not subtask)
+      if (this.info === undefined) return -1;
+      if (this.mode === "edit") {
+        //отдаем в info задачу для изменения
+        //Если у задачи есть родитель вернуть его
+        if (this.info.parentId === undefined) return -1;
+        else return this.info.parentId;
+      } //Если create то parentId = id
+       else if (this.info.id === undefined) return -1;
+      else return this.info.id;
     },
     getSectionId() {
       if (
@@ -123,6 +125,27 @@ export default {
         return this.searchSectionId();
       else return this.info.sectionId;
     },
+  },
+  methods: {
+    confirmTask() {
+      if (this.mode === "create") this.addTask();
+      else this.editTask();
+    },
+    addTask() {
+      this.$store.dispatch("addNewTask", this.getInfo());
+    },
+    editTask() {
+      //Либо оставить подзадачу как есть и менять только текст/дату
+      //Либо переназначить на другой проект, как просто задачу
+      console.log("Edit Task");
+      console.log(this.info);
+      // передать id и taskInfo отдельно
+      // this.$store.dispatch("updateTask", {
+      //   id: this.info.id,
+      //   info: this.getInfo(),
+      // });
+    },
+
     searchSectionId() {
       let id = -1;
       this.getSections.forEach((el) => {
@@ -137,32 +160,28 @@ export default {
       });
       return id;
     },
-    getParentId() {
-      if (this.info === undefined || this.info.id === undefined)
-        return -1;
-      else return this.info.id;
-    },
+
     getInfo() {
-      if (this.searchSectionId() !== -1 && this.getParentId() !== -1)
+      if (this.searchSectionId() !== -1 && this.getParentId !== -1)
         return {
           content: this.taskContent,
           description: this.taskDescription,
-          sectionId: this.getSectionId(),
-          parent_id: this.getParentId(),
+          sectionId: this.getSectionId,
+          parent_id: this.getParentId,
         };
-      if (this.searchSectionId() !== -1 && this.getParentId() === -1)
+      if (this.searchSectionId() !== -1 && this.getParentId === -1)
         return {
           content: this.taskContent,
           description: this.taskDescription,
-          sectionId: this.getSectionId(),
+          sectionId: this.getSectionId,
         };
-      if (this.searchSectionId() === -1 && this.getParentId() !== -1)
+      if (this.searchSectionId() === -1 && this.getParentId !== -1)
         return {
           content: this.taskContent,
           description: this.taskDescription,
-          parent_id: this.getParentId(),
+          parent_id: this.getParentId,
         };
-      if (this.searchSectionId() === -1 && this.getParentId() === -1)
+      if (this.searchSectionId() === -1 && this.getParentId === -1)
         return {
           content: this.taskContent,
           description: this.taskDescription,
