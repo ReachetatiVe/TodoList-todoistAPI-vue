@@ -229,6 +229,18 @@ export default new Vuex.Store({
         return el.id !== payload.id;
       });
     },
+    DELETE_PROJECT: (state, payload) => {
+      if (payload === undefined || payload === null) return;
+      state.tasks = state.tasks.filter((task) => {
+        return task.projectId !== payload;
+      });
+      state.sections = state.sections.filter((section) => {
+        return section.projectId !== payload;
+      });
+      state.projects = state.projects.filter((proj) => {
+        return proj.id !== payload;
+      });
+    },
     DELETE_TASK_FROM_SELECTED: (state, payload) => {
       state.selectedTasks = state.selectedTasks.filter((el) => {
         return el.id !== payload.id;
@@ -423,6 +435,19 @@ export default new Vuex.Store({
           if (isSuccess) {
             context.commit("DELETE_TASKS_BY_SECTION_ID", sectionId);
             context.commit("DELETE_SECTION", { id: sectionId });
+          }
+        })
+        .catch((error) => console.log(error));
+    },
+    deleteProject(context) {
+      const projId = context.state.currentProject.id;
+      const api = context.state.api;
+      api
+        .deleteProject(projId)
+        .then((isSuccess) => {
+          if (isSuccess){
+            context.state.currentProject = {};
+            context.commit("DELETE_PROJECT", projId);
           }
         })
         .catch((error) => console.log(error));

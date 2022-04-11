@@ -185,7 +185,7 @@ export default {
       this.showOverlay = true;
     },
     deleteProject() {
-      console.log("Delete project");
+      this.$store.dispatch("deleteProject");
     },
   },
   components: {
