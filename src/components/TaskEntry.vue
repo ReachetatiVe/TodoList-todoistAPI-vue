@@ -152,10 +152,6 @@ export default {
     },
 
     removeLabelById(labelId){
-      console.log("labelId");
-      console.log(labelId);
-      console.log("This.info");
-      console.log(this.info);
       this.$store.dispatch("removeLabelFromTask", {labelId: labelId, task: this.info}); 
     },
 

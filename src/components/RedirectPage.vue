@@ -25,7 +25,6 @@ export default {
         )
         .then((response) => {
           const token = response.data.access_token;
-        //   this.$store.commit("SET_TOKEN", token);
           this.$store.dispatch("getApi", token)
           this.$router.push("./project-list");
         })

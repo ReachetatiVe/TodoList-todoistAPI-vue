@@ -2,6 +2,9 @@
   <v-container>
     <v-navigation-drawer v-model="drawer" app>
       <v-list>
+        <v-list-item>
+          <v-btn outlined color="primary" @click="logout()"> LogOut </v-btn></v-list-item>
+          <v-divider></v-divider>
         <v-list-item link @click="toggleShowCalendar">Calendar</v-list-item>
         <v-list-item link @click="toggleShowLabels">Labels</v-list-item>
       </v-list>
@@ -30,7 +33,10 @@
                 v-for="project in getProjects"
                 :key="'_' + project.id"
                 link
-                ><Project v-bind:info="project" v-on:toggleProjectBrowser = "toggleShowProjectBrowser" />
+                ><Project
+                  v-bind:info="project"
+                  v-on:toggleProjectBrowser="toggleShowProjectBrowser"
+                />
               </v-list-item>
             </v-list>
           </v-expansion-panel-content>
@@ -40,12 +46,11 @@
 
     <v-app-bar app>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-
-      <v-toolbar-title>Manager</v-toolbar-title>
+      <v-toolbar-title>Manager </v-toolbar-title>
     </v-app-bar>
 
     <ProjecBrowser v-if="showProjectBrowser" />
-    <LabelBrowser v-if="showLabels"/>
+    <LabelBrowser v-if="showLabels" />
 
     <v-overlay :value="showOverlay">
       <ProjectCreator
@@ -90,7 +95,7 @@ export default {
       this.showOverlay = false;
       this.showCalendar = !this.showCalendar;
     },
-    toggleShowLabels(){
+    toggleShowLabels() {
       this.showOverlay = false;
       this.showCalendar = false;
       this.showLabels = !this.showLabels;
@@ -99,7 +104,11 @@ export default {
       this.showOverlay = false;
       this.showCalendar = false;
       this.showLabels = false;
-    }
+    },
+    logout(){
+      this.$store.commit("CLEAR_STORAGE");
+      this.$router.push("/");
+    },
   },
 
   computed: {
@@ -113,12 +122,16 @@ export default {
       return this.$store.getters.GET_CURR_PROJECT;
     },
     showProjectBrowser() {
-      return this.getCurrentProject.id && this.showLabels === false && this.showCalendar === false;
-    }
+      return (
+        this.getCurrentProject.id &&
+        this.showLabels === false &&
+        this.showCalendar === false
+      );
+    },
   },
 
   mounted() {
-    this.$store.dispatch("getAllInfo");
+    this.$store.dispatch("initialiseStore");
   },
 
   components: {

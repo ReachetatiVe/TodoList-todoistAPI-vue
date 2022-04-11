@@ -149,15 +149,6 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    initialiseStore(state) {
-      if (localStorage.getItem("token")) {
-        try {
-          state.token = localStorage.getItem("token");
-        } catch (e) {
-          localStorage.removeItem("token");
-        }
-      }
-    },
     SET_CURRENT_PROJECT: (state, payload) => {
       if (payload === null || payload === undefined) return;
       state.currentProject = payload;
@@ -276,12 +267,37 @@ export default new Vuex.Store({
     CLEAR_PROJECTS: (state) => {
       state.projects = [];
     },
+    CLEAR_STORAGE:(state)=>{
+      state.api= TodoistApi;
+      state.token= "";
+      state.projects= [];
+      state.sections= [];
+      state.tasks= [];
+      state.labels= [];
+      state.tasksInCurrentSection= [];
+      state.currentProject= {};
+      state.selectedTasks= [];
+      state.hasClosedTasks= false;
+    },
   },
   actions: {
     getApi(context, token) {
       const api = new TodoistApi(token);
       context.commit("SET_API", api);
       context.commit("SET_TOKEN", token);
+    },
+    initialiseStore(context) {
+      if (localStorage.getItem("token")) {
+        try {
+          context.state.token = localStorage.getItem("token");
+          const api = new TodoistApi(context.state.token);
+          context.commit("SET_API", api);
+          context.dispatch("getAllInfo");
+        } catch (e) {
+          localStorage.removeItem("token");
+          console.log(e);
+        }
+      }
     },
     getAllProjects(context) {
       context.commit("CLEAR_PROJECTS");
