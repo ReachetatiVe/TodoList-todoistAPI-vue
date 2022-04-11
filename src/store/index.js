@@ -441,6 +441,27 @@ export default new Vuex.Store({
         })
         .catch((error) => console.log(error));
     },
+    removeLabelFromTask(context, payload) {
+      if (
+        payload === undefined ||
+        payload === null ||
+        payload.task.id === null ||
+        payload.task.id === undefined ||
+        payload.labelId === null ||
+        payload.labelId === undefined ||
+        payload.task.labelIds === undefined ||
+        payload.task.labelIds === null
+      )
+        return;
+      const newTaskObj = {
+        ...payload.task,
+      };
+      const newLabelIds = payload.task.labelIds.filter((el) => {
+        return el !== payload.labelId;
+      });
+      newTaskObj.labelIds = newLabelIds;
+      context.dispatch("updateTask", {id : newTaskObj.id, info: newTaskObj});
+    },
     deleteTask(context, taskInfo) {
       if (
         taskInfo.id === null ||
@@ -516,7 +537,13 @@ export default new Vuex.Store({
         .catch((error) => console.log(error));
     },
     updateTask(context, task) {
-      if (task.id === null || task.id === undefined || task.id === "" || task.info.content==="") return;
+      if (
+        task.id === null ||
+        task.id === undefined ||
+        task.id === "" ||
+        task.info.content === ""
+      )
+        return;
       console.log("ACTION updTask");
       console.log(task);
       const api = context.state.api;
@@ -576,8 +603,8 @@ export default new Vuex.Store({
         .then((isSuccess) => {
           if (isSuccess) {
             // context.commit('UPDATE_LABEL', newData);
-            context.dispatch('getAllLabels');
-            context.dispatch('getAllTasks');
+            context.dispatch("getAllLabels");
+            context.dispatch("getAllTasks");
           }
         })
         .catch((error) => console.log(error));

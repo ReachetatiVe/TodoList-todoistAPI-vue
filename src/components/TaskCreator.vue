@@ -184,9 +184,7 @@ export default {
       )
         labelIds = [...this.info.labelIds];
       if (this.selectedLabelsNames.length > 0) {
-        console.log("Надо лейблов добавить");
         this.selectedLabelsNames.forEach((labelName) => {
-          console.log("в форич зашел");
           let id = this.searchLabelIdByName(labelName);
           if (id !== -1) labelIds.push(id);
         });

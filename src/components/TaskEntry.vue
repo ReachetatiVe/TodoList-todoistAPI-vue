@@ -22,6 +22,7 @@
         v-for="label in getTaskLabels"
         :key="label.id"
         class="task__label"
+        @click="removeLabelById(label.id)"
         v-bind:style="{ color: getLabelColor(label.color) }"
       >
         {{ label.name }}
@@ -148,6 +149,14 @@ export default {
   methods: {
     deleteTask() {
       this.$store.dispatch("deleteTask", this.info);
+    },
+
+    removeLabelById(labelId){
+      console.log("labelId");
+      console.log(labelId);
+      console.log("This.info");
+      console.log(this.info);
+      this.$store.dispatch("removeLabelFromTask", {labelId: labelId, task: this.info}); 
     },
 
     //Open overlay with needed creator mode
