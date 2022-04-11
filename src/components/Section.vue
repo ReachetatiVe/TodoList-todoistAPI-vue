@@ -1,14 +1,28 @@
 <template>
-  <v-expansion-panel>
+  <v-expansion-panel class="section">
     <v-expansion-panel-header>
-      <h2>
-        {{ info.name }}
-        <v-btn elevation="2" icon
-          ><v-icon hover @click.stop="editSection">{{
-            icons.mdiPencil
-          }}</v-icon>
-        </v-btn>
-      </h2>
+      <div class="section__header">
+        <h2>
+          {{ info.name }}
+        </h2>
+        <div class="section__controls">
+          <v-btn elevation="2" icon small class="section__control"
+            ><v-icon hover @click.stop="editSection()">{{
+              icons.mdiPencil
+            }}</v-icon>
+          </v-btn>
+          <v-btn
+            elevation="2"
+            icon
+            color="warning"
+            small
+            class="section__control"
+            ><v-icon hover @click.stop="deleteSection()">{{
+              icons.mdiDelete
+            }}</v-icon>
+          </v-btn>
+        </div>
+      </div>
     </v-expansion-panel-header>
     <v-expansion-panel-content>
       <v-list dense>
@@ -71,6 +85,9 @@ export default {
       this.showOverlay = true;
       console.log(this.info);
     },
+    deleteSection() {
+      this.$store.dispatch("deleteSection", this.info.id);
+    },
   },
   components: {
     TaskEntry,
@@ -78,3 +95,25 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.section {
+  &__header {
+    display: flex;
+    max-width: 75%;
+    justify-content: space-between;
+  }
+  &__controls {
+    display: flex;
+    max-width: 100px;
+    justify-content: space-between;
+    position: relative;
+  }
+  &__control {
+    margin-right: 5px;
+    &:last-child{
+      margin-right: 0;
+    }
+  }
+}
+</style>

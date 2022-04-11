@@ -216,6 +216,11 @@ export default new Vuex.Store({
         return el.id !== payload.id;
       });
     },
+    DELETE_TASKS_BY_SECTION_ID: (state, payload) => {
+      state.tasks = state.tasks.filter((el) => {
+        return el.sectionId !== payload;
+      });
+    },
     DELETE_SECTION: (state, payload) => {
       state.sections = state.sections.filter((el) => {
         return el.id !== payload.id;
@@ -371,12 +376,11 @@ export default new Vuex.Store({
       api
         .deleteTask(taskInfo.id)
         .then((isSuccess) => {
-          // if (isSuccess) context.dispatch("getAllTasks");
           if (isSuccess) {
             let tasksFromParentSection = context.state.tasks.filter((el) => {
               return el.sectionId === taskInfo.sectionId;
             });
-            context.dispatch("deleteTasksChildren", {
+            context.dispatch("deleteTaskChildren", {
               items: tasksFromParentSection,
               item: taskInfo,
             });
@@ -384,17 +388,30 @@ export default new Vuex.Store({
         })
         .catch((error) => console.log(error));
     },
-    deleteTasksChildren(context, payload) {
+    deleteTaskChildren(context, payload) {
       let items = payload.items;
       let item = payload.item;
       if (item.parentdId) {
-        items = context.dispatch("deleteTasksChildren", {
+        items = context.dispatch("deleteTaskChildren", {
           items: items,
           item: item[item.parentId],
         });
       }
       context.commit("DELETE_TASK", item);
       return items;
+    },
+    deleteSection(context, sectionId) {
+      if (sectionId === undefined || sectionId === null) return;
+      const api = context.state.api;
+      api
+        .deleteSection(sectionId)
+        .then((isSuccess) => {
+          if (isSuccess) {
+            context.commit("DELETE_TASKS_BY_SECTION_ID", sectionId);
+            context.commit("DELETE_SECTION", { id: sectionId });
+          }
+        })
+        .catch((error) => console.log(error));
     },
     updateTask(context, task) {
       console.log("Action: updateTask");
