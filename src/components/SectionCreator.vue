@@ -50,7 +50,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .section-creator {
   // .section-creator__header
 

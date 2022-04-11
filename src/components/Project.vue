@@ -28,6 +28,7 @@ export default {
   },
   methods: {
     makeProjectCurrent() {
+      this.$emit("toggleProjectBrowser");
       this.$store.commit("SET_CURRENT_PROJECT", this.info);
       // this.$store.dispatch("getCurrentProjInfo");
     },

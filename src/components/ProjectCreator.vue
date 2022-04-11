@@ -1,6 +1,6 @@
 <template>
   <div class="project-creator">
-    <h1>{{getMode}} project</h1>
+    <h1>{{ getMode }} project</h1>
     <v-text-field
       class="project-creator__text-filed"
       label="Project name"
@@ -98,8 +98,10 @@ export default {
     confirmProject() {
       if (this.getMode === "create") this.addProject();
       else this.editProject();
+      this.$emit("close-overlay");
     },
     addProject() {
+      if (this.projectName === null || this.projectName === undefined || this.projectName === "") return
       this.$store.dispatch("addNewProject", {
         name: this.projectName,
         color: this.color.id,
@@ -109,6 +111,8 @@ export default {
       const projObj = {};
       if (this.projectName !== "") projObj.name = this.projectName;
       else projObj.name = this.getCurrentProject.name;
+      if (this.color !== null) projObj.color = this.color.id;
+      else projObj.color = this.getCurrentProject.color;
       this.$store.dispatch("updateCurrentProject", projObj);
     },
   },

@@ -14,7 +14,7 @@
           <v-btn
             elevation="2"
             icon
-            color="warning"
+            color="red darken-2"
             small
             class="project__header-control"
             ><v-icon hover @click.stop="deleteProject()">{{
@@ -221,7 +221,7 @@ export default {
     position: relative;
   }
   &__header-control {
-    margin-right: 5px;
+    margin-right: 10px;
     &:last-child {
       margin-right: 0;
     }

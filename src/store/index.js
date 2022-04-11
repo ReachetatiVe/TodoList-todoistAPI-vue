@@ -11,6 +11,7 @@ export default new Vuex.Store({
     projects: [],
     sections: [],
     tasks: [],
+    labels: [],
     tasksInCurrentSection: [],
     currentProject: {},
     selectedTasks: [],
@@ -131,6 +132,9 @@ export default new Vuex.Store({
     GET_TASKS: (state) => {
       return state.tasks;
     },
+    GET_LABELS: (state) => {
+      return state.labels;
+    },
     GET_CURR_PROJECT: (state) => {
       return state.currentProject;
     },
@@ -198,6 +202,13 @@ export default new Vuex.Store({
         });
       else state.projects.push(payload);
     },
+    SET_LABELS: (state, payload) => {
+      if (Array.isArray(payload))
+        payload.forEach((element) => {
+          state.labels.push(element);
+        });
+      else state.labels.push(payload);
+    },
     SET_API: (state, payload) => {
       state.api = payload;
     },
@@ -210,6 +221,13 @@ export default new Vuex.Store({
       const index = state.projects.findIndex((p) => p.id === payload.id);
       if (index !== -1) {
         state.projects[index] = payload;
+      }
+    },
+    UPDATE_LABEL: (state, payload) => {
+      if (payload.id === undefined || payload.id === null) return;
+      const index = state.labels.findIndex((p) => p.id === payload.id);
+      if (index !== -1) {
+        state.labels[index] = payload;
       }
     },
     //! рекурсивное удаление
@@ -239,6 +257,12 @@ export default new Vuex.Store({
       });
       state.projects = state.projects.filter((proj) => {
         return proj.id !== payload;
+      });
+    },
+    DELETE_LABEL: (state, payload) => {
+      if (payload === undefined || payload === null) return;
+      state.labels = state.labels.filter((el) => {
+        return el.id !== payload;
       });
     },
     DELETE_TASK_FROM_SELECTED: (state, payload) => {
@@ -291,6 +315,14 @@ export default new Vuex.Store({
         })
         .catch((error) => console.log(error));
     },
+    getAllLabels(context) {
+      context.state.labels = [];
+      const api = context.state.api;
+      api
+        .getLabels()
+        .then((labels) => context.commit("SET_LABELS", labels))
+        .catch((error) => console.log(error));
+    },
     getTasksInSection(context, sectionId) {
       if (sectionId === null || sectionId === undefined) return;
       context.state.tasksInCurrentSection = [];
@@ -334,10 +366,9 @@ export default new Vuex.Store({
       context.dispatch("getAllProjects");
       context.dispatch("getAllSections");
       context.dispatch("getAllTasks");
+      context.dispatch("getAllLabels");
     },
     addNewTask(context, taskInfo) {
-      console.log("Add new task info (store):");
-      console.log(taskInfo);
       if (
         taskInfo === null ||
         taskInfo === undefined ||
@@ -388,6 +419,25 @@ export default new Vuex.Store({
         .then((project) => {
           console.log(project);
           context.commit("SET_PROJECTS", project);
+        })
+        .catch((error) => console.log(error));
+    },
+    addNewLabel(context, labelInfo) {
+      if (
+        labelInfo === null ||
+        labelInfo === undefined ||
+        labelInfo.name === "" ||
+        labelInfo.name === null ||
+        labelInfo.name === undefined
+      )
+        return;
+      console.log("ACTION: add label");
+      const api = context.state.api;
+      api
+        .addLabel(labelInfo)
+        .then((label) => {
+          console.log("УСПЕХ");
+          context.commit("SET_LABELS", label);
         })
         .catch((error) => console.log(error));
     },
@@ -445,16 +495,27 @@ export default new Vuex.Store({
       api
         .deleteProject(projId)
         .then((isSuccess) => {
-          if (isSuccess){
+          if (isSuccess) {
             context.state.currentProject = {};
             context.commit("DELETE_PROJECT", projId);
           }
         })
         .catch((error) => console.log(error));
     },
+    deleteLabel(context, labelId) {
+      if (labelId === null || labelId === undefined) return;
+      const api = context.state.api;
+      api
+        .deleteLabel(labelId)
+        .then((isSuccess) => {
+          if (isSuccess) {
+            context.commit("DELETE_LABEL", labelId);
+            context.dispatch("getAllTasks");
+          }
+        })
+        .catch((error) => console.log(error));
+    },
     updateTask(context, task) {
-      console.log("Action: updateTask");
-      console.log(task);
       if (task.id === null || task.id === undefined || task.id === "") return;
       const api = context.state.api;
       api
@@ -495,6 +556,27 @@ export default new Vuex.Store({
         .then((isSuccess) => {
           console.log(isSuccess);
           context.dispatch("getCurrentProjectById", curProjId);
+        })
+        .catch((error) => console.log(error));
+    },
+    updateLabel(context, newData) {
+      if (
+        newData === null ||
+        newData === undefined ||
+        newData.id === null ||
+        newData.id === undefined ||
+        newData.id === ""
+      )
+        return;
+      const api = context.state.api;
+      api
+        .updateLabel(newData.id, newData)
+        .then((isSuccess) => {
+          if (isSuccess) {
+            // context.commit('UPDATE_LABEL', newData);
+            context.dispatch('getAllLabels');
+            context.dispatch('getAllTasks');
+          }
         })
         .catch((error) => console.log(error));
     },

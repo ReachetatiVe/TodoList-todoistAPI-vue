@@ -17,6 +17,18 @@
       :items="getSectionsNames"
       label="Select section"
     ></v-select>
+    <v-row>
+      <v-col cols="12">
+        <v-combobox
+          v-model="select"
+          :items="getLabelsNames"
+          label="Labels"
+          multiple
+          outlined
+          dense
+        ></v-combobox>
+      </v-col>
+    </v-row>
     <!-- <div class="another-project-picker" v-if="getMode === 'edit'">
       <v-select
         outlined
@@ -33,11 +45,9 @@
       ></v-select>
     </div> -->
     <v-row justify="center">
-    <v-date-picker
-      v-model="date"
-      class="mt-4"
-    ></v-date-picker>
-  </v-row>
+      <v-date-picker v-model="date" class="mt-4"></v-date-picker>
+    </v-row>
+
     <v-btn color="success" @click="confirmTask()">Ok</v-btn>
   </div>
 </template>
@@ -61,11 +71,30 @@ export default {
       taskSectionName: "",
       projectNames: [],
       sectionsNames: [],
+      selectedLabels: [],
     };
   },
   computed: {
     getProjects() {
       return this.$store.getters.GET_PROJECTS;
+    },
+    getLabels() {
+      return this.$store.getters.GET_LABELS;
+    },
+    getLabelsNames() {
+      //Если создать задачу, то доступны все лейблы, иначе только те, которых нет
+      const tmp = [];
+      if (this.mode === "create")
+        this.getLabels.forEach((el) => {
+          tmp.push(el.name);
+        });
+      else
+      this.getLabels.forEach((label) => {
+        if (!this.info.labelIds.includes(label.id))
+          tmp.push(label.name);
+        });
+       console.log(tmp);
+      return tmp;
     },
     getSections() {
       return this.$store.getters.GET_SECTIONS;
@@ -154,7 +183,8 @@ export default {
       };
       if (this.getSectionId !== -1) InfoObj.sectionId = this.getSectionId;
       if (this.getParentId !== -1) InfoObj.parentId = this.getParentId;
-      if (this.data !=="" || this.data !== null || this.data !== undefined) InfoObj.due_date = this.date;
+      if (this.data !== "" || this.data !== null || this.data !== undefined)
+        InfoObj.due_date = this.date;
       return InfoObj;
     },
   },

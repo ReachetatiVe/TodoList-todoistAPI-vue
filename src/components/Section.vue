@@ -6,16 +6,17 @@
           {{ info.name }}
         </h2>
         <div class="section__controls">
-          <v-btn elevation="2" icon small class="section__control"
+          <v-btn outlined elevation="2" icon  class="section__control"
             ><v-icon hover @click.stop="editSection()">{{
               icons.mdiPencil
             }}</v-icon>
           </v-btn>
           <v-btn
+            outlined
             elevation="2"
             icon
-            color="warning"
-            small
+            color="red darken-2"
+            
             class="section__control"
             ><v-icon hover @click.stop="deleteSection()">{{
               icons.mdiDelete
@@ -109,8 +110,8 @@ export default {
     position: relative;
   }
   &__control {
-    margin-right: 5px;
-    &:last-child{
+    margin-right: 15px;
+    &:last-child {
       margin-right: 0;
     }
   }

@@ -2,19 +2,35 @@
   <v-container>
     <v-navigation-drawer v-model="drawer" app>
       <v-list>
-        <v-list-item link>Calendar</v-list-item>
-        <v-list-item link>Filters & labels</v-list-item>
+        <v-list-item link @click="toggleShowCalendar">Calendar</v-list-item>
+        <v-list-item link @click="toggleShowLabels">Labels</v-list-item>
       </v-list>
       <v-expansion-panels>
         <v-expansion-panel>
-          <v-expansion-panel-header> Projects </v-expansion-panel-header>
+          <v-expansion-panel-header>
+            <h3>Projects</h3>
+            <div>
+              <v-btn
+                elevation="2"
+                icon
+                x-small
+                class="mx-2"
+                fab
+                dark
+                color="indigo"
+                ><v-icon hover @click.stop="showOverlay = true">{{
+                  icons.mdiPlus
+                }}</v-icon>
+              </v-btn>
+            </div>
+          </v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-list>
               <v-list-item
                 v-for="project in getProjects"
                 :key="'_' + project.id"
                 link
-                ><Project v-bind:info="project" />
+                ><Project v-bind:info="project" v-on:toggleProjectBrowser = "toggleShowProjectBrowser" />
               </v-list-item>
             </v-list>
           </v-expansion-panel-content>
@@ -28,14 +44,24 @@
       <v-toolbar-title>Manager</v-toolbar-title>
     </v-app-bar>
 
-    <ProjecBrowser v-if="getCurrentProject.id" />
+    <ProjecBrowser v-if="showProjectBrowser" />
+    <LabelBrowser v-if="showLabels"/>
+
+    <v-overlay :value="showOverlay">
+      <ProjectCreator
+        v-bind:mode="'create'"
+        v-on:close-overlay="toggleOverlay"
+      />
+    </v-overlay>
   </v-container>
 </template>
 
 <script>
-// import { TodoistApi } from "@doist/todoist-api-typescript";
 import Project from "./Project.vue";
 import ProjecBrowser from "./ProjectBrowser.vue";
+import ProjectCreator from "./ProjectCreator.vue";
+import LabelBrowser from "./LabelBrowser.vue";
+import { mdiPlus } from "@mdi/js";
 
 // @ is an alias to /src
 
@@ -46,7 +72,34 @@ export default {
       drawer: null,
       api: "",
       projects: [],
+      icons: {
+        mdiPlus,
+      },
+      showOverlay: false,
+      showCalendar: false,
+      showLabels: false,
     };
+  },
+
+  methods: {
+    toggleOverlay() {
+      this.showOverlay = !this.showOverlay;
+    },
+    toggleShowCalendar() {
+      this.showLabels = false;
+      this.showOverlay = false;
+      this.showCalendar = !this.showCalendar;
+    },
+    toggleShowLabels(){
+      this.showOverlay = false;
+      this.showCalendar = false;
+      this.showLabels = !this.showLabels;
+    },
+    toggleShowProjectBrowser() {
+      this.showOverlay = false;
+      this.showCalendar = false;
+      this.showLabels = false;
+    }
   },
 
   computed: {
@@ -59,32 +112,20 @@ export default {
     getCurrentProject() {
       return this.$store.getters.GET_CURR_PROJECT;
     },
+    showProjectBrowser() {
+      return this.getCurrentProject.id && this.showLabels === false && this.showCalendar === false;
+    }
   },
 
   mounted() {
     this.$store.dispatch("getAllInfo");
-
-    //TODO: почему не срабатывает unmounted и переделать
-    // this.$store.commit("CLEAR_PROJECTS");
-    // this.api = new TodoistApi(this.getToken);
-    // this.api
-    //   .getProjects()
-    //   .then((projects) => {
-    //     console.log(projects);
-    //     // projects.forEach(element => {
-    //     //   this.projects.push(element)
-    //     // });
-    //     this.$store.commit("SET_PROJECTS", projects);
-    //   })
-    //   .catch((error) => console.log(error));
   },
 
-  // unmounted() {
-  //   console.log("ListUnmounted");
-  // },
   components: {
     Project,
     ProjecBrowser,
+    ProjectCreator,
+    LabelBrowser,
   },
 };
 </script>
