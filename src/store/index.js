@@ -216,6 +216,11 @@ export default new Vuex.Store({
         return el.id !== payload.id;
       });
     },
+    DELETE_SECTION: (state, payload) => {
+      state.sections = state.sections.filter((el) => {
+        return el.id !== payload.id;
+      });
+    },
     DELETE_TASK_FROM_SELECTED: (state, payload) => {
       state.selectedTasks = state.selectedTasks.filter((el) => {
         return el.id !== payload.id;
@@ -278,16 +283,20 @@ export default new Vuex.Store({
         .catch((error) => console.log(error));
     },
     getTaskById(context, taskId) {
-      console.log("getTaskByID ДО ЗАПРОСА");
-      console.log("taskID: " + taskId);
       const api = context.state.api;
       api
         .getTask(taskId)
         .then((task) => {
-          console.log("getTaskByID внутри колбэка");
-          console.log(task);
           context.commit("SET_TASKS", task);
         })
+        .catch((error) => console.log(error));
+    },
+    getSectionById(context, sectionId) {
+      if (sectionId === undefined || sectionId === null) return;
+      const api = context.state.api;
+      api
+        .getSection(sectionId)
+        .then((section) => context.commit("SET_SECTIONS", section))
         .catch((error) => console.log(error));
     },
     getAllInfo(context) {
@@ -398,10 +407,23 @@ export default new Vuex.Store({
           if (isSuccess) {
             context.commit("DELETE_TASK", { id: task.id });
             context.dispatch("getTaskById", task.id);
-            // context.commit("DELETE_TASK_ID_FROM_CLOSED", taskId);
-            // console.log(isSuccess);
-            // context.dispatch("getAllTasks");
           }
+        })
+        .catch((error) => console.log(error));
+    },
+    updateSection(context, section) {
+      console.log("Action: updateSection");
+      console.log(section);
+      if (section.id === null || section.id === undefined || section.id === "")
+        return;
+      const api = context.state.api;
+      api
+        .updateSection(section.id, section)
+        .then((isSuccess) => {
+          console.log(isSuccess);
+          context.commit("DELETE_SECTION", { id: section.id });
+          context.dispatch("getSectionById", section.id);
+          // return isSuccess;
         })
         .catch((error) => console.log(error));
     },

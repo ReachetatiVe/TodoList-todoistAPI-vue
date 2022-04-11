@@ -11,8 +11,11 @@
     <div class="task__description">
       {{ info.description }}
     </div>
+    <div class="task__status">
+      {{ "Status: " + getStatus }}
+    </div>
     <div class="task__date" v-if="hasDate">
-      {{info.due.date}}
+      {{ info.due.date }}
     </div>
     <div class="tasks__managament-btns">
       <v-btn
@@ -76,9 +79,18 @@ export default {
     };
   },
   computed: {
-    hasDate(){
-      if (this.info.due === undefined || this.info.due.date === undefined || this.info.due.date === null) return false
+    hasDate() {
+      if (
+        this.info.due === undefined ||
+        this.info.due.date === undefined ||
+        this.info.due.date === null
+      )
+        return false;
       else return true;
+    },
+    getStatus() {
+      if (this.info.completed) return "Closed";
+      else return "Opened";
     },
     getSections() {
       return this.$store.getters.GET_SECTIONS;
@@ -112,7 +124,8 @@ export default {
     },
 
     addTaskIdToSelected() {
-      if (this.checkbox === true) this.$store.commit("SET_TASK_TO_SELECTED", this.info);
+      if (this.checkbox === true)
+        this.$store.commit("SET_TASK_TO_SELECTED", this.info);
       else this.$store.commit("DELETE_TASK_FROM_SELECTED", this.info);
     },
   },

@@ -29,7 +29,7 @@
         >
       </div>
       <TaskCreator v-if="mode === 'task'" v-bind:mode="'create'" />
-      <SectionCreator v-if="mode === 'section'" />
+      <SectionCreator v-if="mode === 'section'" v-bind:mode="'create'"/>
       <ProjectCreator v-if="mode === 'project'" />
     </div>
     <div class="text-center d-flex pb-4">

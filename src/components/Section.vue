@@ -1,8 +1,15 @@
 <template>
   <v-expansion-panel>
     <v-expansion-panel-header>
-      <h2>{{ info.name }}</h2></v-expansion-panel-header
-    >
+      <h2>
+        {{ info.name }}
+        <v-btn elevation="2" icon
+          ><v-icon hover @click.stop="editSection">{{
+            icons.mdiPencil
+          }}</v-icon>
+        </v-btn>
+      </h2>
+    </v-expansion-panel-header>
     <v-expansion-panel-content>
       <v-list dense>
         <v-list-item v-for="task in getTasksInThisSections" :key="task.id">
@@ -10,14 +17,31 @@
         </v-list-item>
       </v-list>
     </v-expansion-panel-content>
+    <v-overlay :value="showOverlay">
+      <template>
+        <SectionCreator v-bind:mode="'edit'" v-bind:info="this.info" />
+        <v-btn color="success" @click="showOverlay = false">
+          Hide Overlay
+        </v-btn>
+      </template>
+    </v-overlay>
   </v-expansion-panel>
 </template>
 
 <script>
 import TaskEntry from "./TaskEntry.vue";
+import SectionCreator from "./SectionCreator.vue";
+import { mdiPencil, mdiDelete } from "@mdi/js";
 
 export default {
   name: "Section-page",
+  data: () => ({
+    icons: {
+      mdiPencil,
+      mdiDelete,
+    },
+    showOverlay: false,
+  }),
   props: {
     info: {},
   },
@@ -42,8 +66,15 @@ export default {
       });
     },
   },
+  methods: {
+    editSection() {
+      this.showOverlay = true;
+      console.log(this.info);
+    },
+  },
   components: {
     TaskEntry,
+    SectionCreator,
   },
 };
 </script>
