@@ -83,7 +83,6 @@ export default {
   methods: {
     editSection() {
       this.showOverlay = true;
-      console.log(this.info);
     },
     deleteSection() {
       this.$store.dispatch("deleteSection", this.info.id);

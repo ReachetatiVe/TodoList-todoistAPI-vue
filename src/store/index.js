@@ -13,7 +13,6 @@ export default new Vuex.Store({
     tasks: [],
     tasksInCurrentSection: [],
     currentProject: {},
-    selectedProject: {},
     selectedTasks: [],
     hasClosedTasks: false,
     colors: [
@@ -135,9 +134,6 @@ export default new Vuex.Store({
     GET_CURR_PROJECT: (state) => {
       return state.currentProject;
     },
-    GET_SELECTED_PROJECT: (state) => {
-      return state.selectedProject;
-    },
     GET_COLORS: (state) => {
       return state.colors;
     },
@@ -208,6 +204,13 @@ export default new Vuex.Store({
     SET_TOKEN: (state, payload) => {
       state.token = payload;
       localStorage.setItem("token", payload);
+    },
+    UPDATE_PROJECT: (state, payload) => {
+      if (payload.id === undefined || payload.id === null) return;
+      const index = state.projects.findIndex((p) => p.id === payload.id);
+      if (index !== -1) {
+        state.projects[index] = payload;
+      }
     },
     //! рекурсивное удаление
     DELETE_TASK: (state, payload) => {
@@ -302,6 +305,17 @@ export default new Vuex.Store({
       api
         .getSection(sectionId)
         .then((section) => context.commit("SET_SECTIONS", section))
+        .catch((error) => console.log(error));
+    },
+    getCurrentProjectById(context, projId) {
+      if (projId === undefined || projId === null) return;
+      const api = context.state.api;
+      api
+        .getProject(projId)
+        .then((project) => {
+          context.commit("SET_CURRENT_PROJECT", project);
+          context.commit("UPDATE_PROJECT", project);
+        })
         .catch((error) => console.log(error));
     },
     getAllInfo(context) {
@@ -444,7 +458,21 @@ export default new Vuex.Store({
         })
         .catch((error) => console.log(error));
     },
-    //! А че не синхронно? Слишком много раз грузит задачи, в update, reopen тоже
+    updateCurrentProject(context, newData) {
+      if (newData === undefined || newData === null) return;
+      console.log("Action: updateProject");
+      console.log(newData);
+      const curProjId = context.state.currentProject.id;
+      const api = this.state.api;
+
+      api
+        .updateProject(curProjId, newData)
+        .then((isSuccess) => {
+          console.log(isSuccess);
+          context.dispatch("getCurrentProjectById", curProjId);
+        })
+        .catch((error) => console.log(error));
+    },
     closeTasks(context) {
       if (
         context.state.selectedTasks === null ||

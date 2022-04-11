@@ -1,6 +1,6 @@
 <template>
   <div class="project-creator">
-    <h1>Create project</h1>
+    <h1>{{getMode}} project</h1>
     <v-text-field
       class="project-creator__text-filed"
       label="Project name"
@@ -16,7 +16,13 @@
       min-width="200"
     >
       <template v-slot:activator="{ on, attrs }">
-        <v-btn  class="project-creator__menu-btn" color="secondary" dark v-bind="attrs" v-on="on">
+        <v-btn
+          class="project-creator__menu-btn"
+          color="secondary"
+          dark
+          v-bind="attrs"
+          v-on="on"
+        >
           <div class="project-creator__color-item">
             <p>Pick color</p>
             <span
@@ -45,17 +51,19 @@
       </v-list>
     </v-menu>
     <div>
-      <v-btn color="success" @click="addProject()">Ok</v-btn>
+      <v-btn color="success" @click="confirmProject()">Ok</v-btn>
     </div>
   </div>
 </template>
 <script>
 export default {
   name: "Project-Creator",
+  props: {
+    mode: String,
+  },
   data() {
     return {
       projectName: "",
-      parentProjId: "",
       color: {},
       projectNames: [],
     };
@@ -76,16 +84,32 @@ export default {
     getColors() {
       return this.$store.getters.GET_COLORS;
     },
+    getMode() {
+      return this.mode;
+    },
+    getCurrentProject() {
+      return this.$store.getters.GET_CURR_PROJECT;
+    },
   },
   methods: {
     pickColor(color) {
       this.color = color;
+    },
+    confirmProject() {
+      if (this.getMode === "create") this.addProject();
+      else this.editProject();
     },
     addProject() {
       this.$store.dispatch("addNewProject", {
         name: this.projectName,
         color: this.color.id,
       });
+    },
+    editProject() {
+      const projObj = {};
+      if (this.projectName !== "") projObj.name = this.projectName;
+      else projObj.name = this.getCurrentProject.name;
+      this.$store.dispatch("updateCurrentProject", projObj);
     },
   },
 };
@@ -111,7 +135,7 @@ export default {
   &__text-filed {
     margin-bottom: 15px;
   }
-  &__menu-btn{
+  &__menu-btn {
     margin-bottom: 15px;
   }
 }
