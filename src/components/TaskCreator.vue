@@ -20,7 +20,7 @@
     <v-row>
       <v-col cols="12">
         <v-combobox
-          v-model="select"
+          v-model="selectedLabelsNames"
           :items="getLabelsNames"
           label="Labels"
           multiple
@@ -29,21 +29,6 @@
         ></v-combobox>
       </v-col>
     </v-row>
-    <!-- <div class="another-project-picker" v-if="getMode === 'edit'">
-      <v-select
-        outlined
-        v-model="taskProjectName"
-        :items="getProjectsNames"
-        label="Select another project"
-      ></v-select>
-      <v-select
-        v-show="taskProjectName.length > 0"
-        outlined
-        v-model="taskSectionName"
-        :items="getSectionsNames"
-        label="Select section"
-      ></v-select>
-    </div> -->
     <v-row justify="center">
       <v-date-picker v-model="date" class="mt-4"></v-date-picker>
     </v-row>
@@ -71,7 +56,7 @@ export default {
       taskSectionName: "",
       projectNames: [],
       sectionsNames: [],
-      selectedLabels: [],
+      selectedLabelsNames: [],
     };
   },
   computed: {
@@ -79,6 +64,7 @@ export default {
       return this.$store.getters.GET_PROJECTS;
     },
     getLabels() {
+      console.log("Геттер");
       return this.$store.getters.GET_LABELS;
     },
     getLabelsNames() {
@@ -89,11 +75,9 @@ export default {
           tmp.push(el.name);
         });
       else
-      this.getLabels.forEach((label) => {
-        if (!this.info.labelIds.includes(label.id))
-          tmp.push(label.name);
+        this.getLabels.forEach((label) => {
+          if (!this.info.labelIds.includes(label.id)) tmp.push(label.name);
         });
-       console.log(tmp);
       return tmp;
     },
     getSections() {
@@ -175,6 +159,13 @@ export default {
       });
       return id;
     },
+    searchLabelIdByName(labelName) {
+      let labelId = -1;
+      this.getLabels.forEach((label) => {
+        if (label.name === labelName) labelId = label.id;
+      });
+      return labelId;
+    },
 
     getInfo() {
       const InfoObj = {
@@ -185,6 +176,23 @@ export default {
       if (this.getParentId !== -1) InfoObj.parentId = this.getParentId;
       if (this.data !== "" || this.data !== null || this.data !== undefined)
         InfoObj.due_date = this.date;
+      let labelIds = [];
+      if (
+        this.info !== undefined &&
+        this.info.labelIds !== undefined &&
+        this.info.labelIds.length > 0
+      )
+        labelIds = [...this.info.labelIds];
+      if (this.selectedLabelsNames.length > 0) {
+        console.log("Надо лейблов добавить");
+        this.selectedLabelsNames.forEach((labelName) => {
+          console.log("в форич зашел");
+          let id = this.searchLabelIdByName(labelName);
+          if (id !== -1) labelIds.push(id);
+        });
+      }
+      if (labelIds.length>0)
+      InfoObj.label_ids  = labelIds;
       return InfoObj;
     },
   },

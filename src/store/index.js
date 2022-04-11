@@ -516,7 +516,9 @@ export default new Vuex.Store({
         .catch((error) => console.log(error));
     },
     updateTask(context, task) {
-      if (task.id === null || task.id === undefined || task.id === "") return;
+      if (task.id === null || task.id === undefined || task.id === "" || task.info.content==="") return;
+      console.log("ACTION updTask");
+      console.log(task);
       const api = context.state.api;
       api
         .updateTask(task.id, task.info)

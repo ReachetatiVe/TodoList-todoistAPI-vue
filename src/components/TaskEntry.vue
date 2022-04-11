@@ -17,6 +17,16 @@
     <div class="task__date" v-if="hasDate">
       {{ info.due.date }}
     </div>
+    <div class="task__labels" v-if="getTaskLabels !== -1">
+      <span
+        v-for="label in getTaskLabels"
+        :key="label.id"
+        class="task__label"
+        v-bind:style="{ color: getLabelColor(label.color) }"
+      >
+        {{ label.name }}
+      </span>
+    </div>
     <div class="tasks__managament-btns">
       <v-btn
         class="task__managament-btn"
@@ -88,6 +98,26 @@ export default {
         return false;
       else return true;
     },
+    getTaskLabelIds() {
+      if (
+        this.labelIds !== undefined ||
+        this.labelIds !== null ||
+        this.labelIds.length === 0
+      )
+        return this.info.labelIds;
+      return -1;
+    },
+    getTaskLabels() {
+      //Если создать задачу, то доступны все лейблы, иначе только те, которых нет
+      if (this.getTaskLabelIds !== -1) {
+        const tmp = [];
+        this.getLabels.forEach((label) => {
+          if (this.getTaskLabelIds.includes(label.id)) tmp.push(label);
+        });
+        return tmp;
+      }
+      return -1;
+    },
     getStatus() {
       if (this.info.completed) return "Closed";
       else return "Opened";
@@ -111,6 +141,9 @@ export default {
     getCurrentProject() {
       return this.$store.getters.GET_CURR_PROJECT;
     },
+    getLabels() {
+      return this.$store.getters.GET_LABELS;
+    },
   },
   methods: {
     deleteTask() {
@@ -127,6 +160,13 @@ export default {
       if (this.checkbox === true)
         this.$store.commit("SET_TASK_TO_SELECTED", this.info);
       else this.$store.commit("DELETE_TASK_FROM_SELECTED", this.info);
+    },
+    getLabelColor(labelColor) {
+      let color = "#fff";
+      this.$store.getters.GET_COLORS.forEach((element) => {
+        if (element.id === labelColor) color = element.hex;
+      });
+      return color;
     },
   },
   components: {
@@ -154,6 +194,19 @@ export default {
   }
   &__managament-btn {
     margin-right: 10px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  &__labels {
+    position: relative;
+    margin-bottom: 3px;
+  }
+  &__label {
+    margin-right: 5px;
+    padding: 2px;
+    border: 1px solid;
+    border-radius: 3px;
     &:last-child {
       margin-right: 0;
     }
