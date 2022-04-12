@@ -65,24 +65,22 @@
           >
             <v-card color="grey lighten-4" min-width="350px" flat>
               <v-toolbar :color="selectedEvent.color" dark>
-                <v-btn icon>
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
                 <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-btn icon>
-                  <v-icon>mdi-heart</v-icon>
-                </v-btn>
-                <v-btn icon>
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
               </v-toolbar>
               <v-card-text>
-                <span v-html="selectedEvent.desc"></span>
+                <div>
+                  <span>Project: </span>
+                  <span v-html="selectedEvent.projName"></span>
+                </div>
+                <div>
+                  <span>Description: </span>
+                  <span v-html="selectedEvent.desc"></span>
+                </div>
               </v-card-text>
               <v-card-actions>
                 <v-btn text color="secondary" @click="selectedOpen = false">
-                  Cancel
+                  Close
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -107,25 +105,6 @@ export default {
     selectedElement: null,
     selectedOpen: false,
     events: [],
-    colors: [
-      "blue",
-      "indigo",
-      "deep-purple",
-      "cyan",
-      "green",
-      "orange",
-      "grey darken-1",
-    ],
-    names: [
-      "Meeting",
-      "Holiday",
-      "PTO",
-      "Travel",
-      "Event",
-      "Birthday",
-      "Conference",
-      "Party",
-    ],
   }),
   mounted() {
     this.$refs.calendar.checkChange();
@@ -173,9 +152,11 @@ export default {
         events.push({
           name: this.getTasksWithDate[i].content,
           desc: this.getTasksWithDate[i].description,
+          projName: this.getTaskProjectNameByProjectId(
+            this.getTasksWithDate[i].projectId
+          ),
           start: this.getTasksWithDate[i].due.date,
           end: this.getTasksWithDate[i].due.date,
-          //   color: this.colors[this.rnd(0, this.colors.length - 1)],
           color: this.getTaskColorByProjectId(
             this.getTasksWithDate[i].projectId
           ),
@@ -184,16 +165,18 @@ export default {
 
       this.events = events;
     },
-    rnd(a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a;
-    },
     getTaskColorByProjectId(projectId) {
-      const colorId = this.getProjects.find((item) => item.id === projectId).color;
+      const colorId = this.getProjects.find(
+        (item) => item.id === projectId
+      ).color;
       return this.getColorById(colorId);
     },
-    getColorById(colorId){
-        return this.getColors.find(item=> item.id === colorId).hex;
-    }
+    getTaskProjectNameByProjectId(projectId) {
+      return this.getProjects.find((item) => item.id === projectId).name;
+    },
+    getColorById(colorId) {
+      return this.getColors.find((item) => item.id === colorId).hex;
+    },
   },
   computed: {
     getTasks() {
