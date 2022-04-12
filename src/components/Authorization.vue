@@ -1,13 +1,7 @@
 <template>
     <div class="autorization">
-      <!-- <button class="autorization__btn" @click="authorization()">
-        Авторизоваться
-      </button> -->
-      <v-btn x-large color="primary" elevation="6" @click="authorization()">Авторизоваться</v-btn>
+      <v-btn x-large color="primary" elevation="6" @click="authorization()">LogIn</v-btn>
     </div>
-    <!-- <v-main>
-      <router-view />
-    </v-main> -->
 </template>
 
 <script>

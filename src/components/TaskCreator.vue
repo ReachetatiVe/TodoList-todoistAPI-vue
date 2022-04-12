@@ -87,7 +87,7 @@ export default {
       return this.$store.getters.GET_SECTIONS;
     },
     getFilteredSections() {
-      console.log("CreateMode");
+
       return this.getSections.filter((el) => {
         return el.projectId === this.getCurrentProject.id;
       });

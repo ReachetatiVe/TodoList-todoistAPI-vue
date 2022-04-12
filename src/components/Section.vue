@@ -67,7 +67,6 @@ export default {
       });
     },
     getTasksInThisSections() {
-      //Tasks from this section && !substasks
       return this.getTasks.filter((el) => {
         return (
           el.sectionId === this.info.id &&

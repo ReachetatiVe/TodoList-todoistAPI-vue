@@ -12,7 +12,6 @@ export default new Vuex.Store({
     sections: [],
     tasks: [],
     labels: [],
-    tasksInCurrentSection: [],
     currentProject: {},
     selectedTasks: [],
     hasClosedTasks: false,
@@ -313,7 +312,6 @@ export default new Vuex.Store({
       state.sections = [];
       state.tasks = [];
       state.labels = [];
-      state.tasksInCurrentSection = [];
       state.currentProject = {};
       state.selectedTasks = [];
       state.hasClosedTasks = false;
@@ -365,7 +363,6 @@ export default new Vuex.Store({
       api
         .getTasks()
         .then((tasks) => {
-          console.log("ACTION: get all tasks");
           context.commit("SET_TASKS", tasks);
         })
         .catch((error) => console.log(error));
@@ -427,8 +424,6 @@ export default new Vuex.Store({
       api
         .addTask(taskInfo)
         .then((task) => {
-          console.log("taskfrom server (store):");
-          console.log(task);
           context.commit("SET_TASKS", task);
         })
         .catch((error) => console.log(error));
@@ -465,7 +460,6 @@ export default new Vuex.Store({
       api
         .addProject(projectInfo)
         .then((project) => {
-          console.log(project);
           context.commit("SET_PROJECTS", project);
         })
         .catch((error) => console.log(error));
@@ -479,12 +473,10 @@ export default new Vuex.Store({
         labelInfo.name === undefined
       )
         return;
-      console.log("ACTION: add label");
       const api = context.state.api;
       api
         .addLabel(labelInfo)
         .then((label) => {
-          console.log("УСПЕХ");
           context.commit("SET_LABELS", label);
         })
         .catch((error) => console.log(error));
@@ -595,8 +587,6 @@ export default new Vuex.Store({
         task.info.content === ""
       )
         return;
-      console.log("ACTION updTask");
-      console.log(task);
       const api = context.state.api;
       api
         .updateTask(task.id, task.info)
@@ -621,10 +611,10 @@ export default new Vuex.Store({
       api
         .updateSection(section.id, section)
         .then((isSuccess) => {
-          console.log(isSuccess);
-          context.commit("DELETE_SECTION", section.id);
-          context.dispatch("getSectionById", section.id);
-          // return isSuccess;
+          if (isSuccess) {
+            context.commit("DELETE_SECTION", section.id);
+            context.dispatch("getSectionById", section.id);
+          }
         })
         .catch((error) => console.log(error));
     },
@@ -668,7 +658,6 @@ export default new Vuex.Store({
         .updateLabel(newData.id, newData)
         .then((isSuccess) => {
           if (isSuccess) {
-            // context.commit('UPDATE_LABEL', newData);
             context.dispatch("getAllLabels");
             context.dispatch("getAllTasks");
           }

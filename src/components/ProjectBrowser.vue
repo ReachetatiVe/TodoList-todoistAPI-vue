@@ -124,7 +124,6 @@ export default {
     getTasksWithoutSections() {
       return this.getTasks.filter((el) => {
         return (
-          //Without section && !substasks
           el.sectionId === null ||
           el.sectionId === undefined ||
           (el.sectionId === 0 &&
@@ -169,7 +168,6 @@ export default {
       this.$store.dispatch("reopenTasks");
     },
     editProject() {
-      console.log("Edit project");
       this.showOverlay = true;
     },
     deleteProject() {
@@ -201,8 +199,6 @@ export default {
 .project {
   &__title {
     display: flex;
-    // max-width: 50%;
-    // justify-content: space-between;
     align-items: center;
   }
   &__title-text {

@@ -71,11 +71,15 @@ export default {
     };
   },
   mounted() {
-    this.color = this.getColors[0];
     if (this.mode !== "create") {
       if (this.getCurrentProject.name !== undefined) {
         this.projectName = this.getCurrentProject.name;
       }
+      if (
+        this.getCurrentProject.color !== null ||
+        this.getCurrentProject.color !== undefined
+      )
+        this.color = this.getColorById(this.getCurrentProject.color);
     }
   },
   computed: {
@@ -120,6 +124,10 @@ export default {
       if (this.color !== null) projObj.color = this.color.id;
       else projObj.color = this.getCurrentProject.color;
       this.$store.dispatch("updateCurrentProject", projObj);
+    },
+    getColorById(colorId) {
+      console.log(this.getColors.find((item) => item.id === colorId));
+      return this.getColors.find((item) => item.id === colorId);
     },
   },
 };

@@ -1,13 +1,19 @@
 <template>
   <v-card class="mx-auto label-browser" max-width="700" tile>
     <div class="label-browser__controls">
-          <v-btn @click="toggleShowCreator()" class="label-browser__control" color="primary"> Add label</v-btn>
+      <v-btn
+        @click="toggleShowCreator()"
+        class="label-browser__control"
+        color="primary"
+      >
+        Add label</v-btn
+      >
     </div>
     <div class="label-browser__creator" v-if="showCreator">
-      <LabelCreator v-bind:mode="'create'" />
+      <LabelCreator v-bind:mode="'create'" v-on:cancelFunc="toggleShowCreator" />
     </div>
     <v-expansion-panels v-model="panel" multiple class="label-browser__labels">
-        <Label :info="label" v-for="label in getLabels" :key="'_' + label.id" />
+      <Label :info="label" v-for="label in getLabels" :key="'_' + label.id" />
     </v-expansion-panels>
   </v-card>
 </template>
@@ -37,9 +43,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.label-browser{
+.label-browser {
   position: relative;
-  &__controls{
+  &__controls {
     padding: 10px;
     margin-bottom: 15px;
   }

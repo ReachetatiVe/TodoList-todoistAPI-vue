@@ -52,6 +52,7 @@
     </v-menu>
     <div>
       <v-btn @click="confirmLabel()" color="success">Ok</v-btn>
+      <v-btn color="error" @click="$emit('cancelFunc')">Cancel</v-btn>
     </div>
   </div>
 </template>
@@ -75,6 +76,9 @@ export default {
     getColors() {
       return this.$store.getters.GET_COLORS;
     },
+    getThisInfo() {
+      return this.info;
+    },
   },
 
   methods: {
@@ -97,20 +101,32 @@ export default {
       }
     },
     editLabel() {
-      console.log("Опа а я редактор");
       const labelObj = {};
-      labelObj.id = this.info.id;
+      labelObj.id = this.getThisInfo.id;
       if (this.labelName !== "") labelObj.name = this.labelName;
-      else labelObj.name = this.info.name;
+      else labelObj.name = this.getThisInfo.name;
       if (this.color.id === null || this.color.id === undefined)
-        labelObj.color = this.info.color;
+        labelObj.color = this.getThisInfo.color;
       else labelObj.color = this.color.id;
-      console.log(labelObj);
       this.$store.dispatch("updateLabel", labelObj);
+    },
+    getColorById(colorId) {
+      console.log(this.getColors.find((item) => item.id === colorId));
+      return this.getColors.find((item) => item.id === colorId);
     },
   },
   mounted() {
-    this.color = this.getColors[0];
+    if (this.mode !== "create") {
+      if (this.getThisInfo !== undefined) {
+        if (this.getThisInfo.name !== undefined)
+          this.labelName = this.getThisInfo.name;
+        if (
+          this.getThisInfo.color !== null ||
+          this.getThisInfo.color !== undefined
+        )
+          this.color = this.getColorById(this.getThisInfo.color);
+      }
+    }
   },
 };
 </script>
@@ -118,7 +134,6 @@ export default {
 <style scoped lang="scss">
 .label-creator {
   padding: 15px;
-  // .label-creator__header
 
   &__color {
     display: inline-block;

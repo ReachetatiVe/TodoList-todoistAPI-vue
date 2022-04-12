@@ -115,6 +115,9 @@ export default {
         return this.info.labelIds;
       return -1;
     },
+    getLabels(){
+      return this.$store.getters.GET_LABELS;
+    },
     getTaskLabels() {
       if (this.getTaskLabelIds !== -1) {
         const tmp = [];

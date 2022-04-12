@@ -36,8 +36,8 @@
       <template>
         <LabelCreator
           v-bind:mode="'edit'"
-          v-bind:info="this.info"
-          v-on:toggleOverlay="toggleOverlay"
+          v-bind:info="this.getThisInfo"
+          v-on:cancelFunc="toggleOverlay"
         />
       </template>
     </v-overlay>
@@ -63,25 +63,27 @@ export default {
   }),
   methods: {
     deleteLabel() {
-      console.log(this.info);
-      this.$store.dispatch("deleteLabel", this.info.id);
+      this.$store.dispatch("deleteLabel", this.getThisInfo.id);
     },
     toggleOverlay() {
       this.showOverlay = !this.showOverlay;
     },
   },
   computed: {
+    getThisInfo(){
+      return this.info;
+    },
     getTasks() {
       return this.$store.getters.GET_TASKS;
     },
     getTasksWithLabel() {
       return this.getTasks.filter((task) => {
-        return task.labelIds.includes(this.info.id);
+        return task.labelIds.includes(this.getThisInfo.id);
       });
     },
     getColorById() {
       let color = "#fff";
-      color = this.$store.getters.GET_COLORS.find(el => el.id === this.info.color).hex;
+      color = this.$store.getters.GET_COLORS.find(el => el.id === this.getThisInfo.color).hex;
       return color;
     },
   },
