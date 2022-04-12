@@ -38,7 +38,7 @@ export default {
   watch: {
     $route: {
       handler: function (route) {
-        if (route.query.code !== null || route.query.code !== undefined) {
+        if (route.query.code !== null && route.query.code !== undefined) {
           this.getToken(route.query.code);
         }
       },

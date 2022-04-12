@@ -108,8 +108,8 @@ export default {
     },
     getTaskLabelIds() {
       if (
-        this.labelIds !== undefined ||
-        this.labelIds !== null ||
+        this.labelIds !== undefined &&
+        this.labelIds !== null &&
         this.labelIds.length === 0
       )
         return this.info.labelIds;

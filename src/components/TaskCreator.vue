@@ -33,7 +33,7 @@
     <v-row justify="center">
       <v-date-picker v-model="taskDate" class="mt-4"></v-date-picker>
     </v-row>
-    <v-row max-width="100">
+    <v-row max-width="100" justify="center">
       <v-btn color="success" @click="confirmTask()">Ok</v-btn>
       <v-btn color="red" @click="$emit('cancelFunc')">Cancel</v-btn>
     </v-row>
@@ -57,7 +57,9 @@ export default {
       taskSectionName: "",
       sectionsNames: [],
       selectedLabelsNames: [],
-      rules: [(value) => !!value || "Required."],
+      rules: [
+        (value) => !!value || "Required.",
+      ],
     };
   },
   computed: {
@@ -87,7 +89,6 @@ export default {
       return this.$store.getters.GET_SECTIONS;
     },
     getFilteredSections() {
-
       return this.getSections.filter((el) => {
         return el.projectId === this.getCurrentProject.id;
       });
@@ -126,23 +127,35 @@ export default {
     confirmTask() {
       if (this.mode === "create") this.addTask();
       else this.editTask();
-      this.$emit("cancelFunc");
     },
     addTask() {
-      this.$store.dispatch("addNewTask", this.getInfo());
+      if (
+        this.taskContent !== "" &&
+        this.taskContent !== undefined &&
+        this.taskContent !== null
+      ) {
+        this.$store.dispatch("addNewTask", this.getInfo());
+        this.$emit("cancelFunc");
+      }
     },
     editTask() {
       this.$store.dispatch("updateTask", {
         id: this.getThisInfo.id,
         info: this.getInfo(),
       });
+      this.$emit("cancelFunc");
     },
 
     searchSectionId() {
       let id = -1;
-      if (this.taskSectionName !== "None" && this.taskSectionName !=="" && this.taskSectionName !==null && this.taskSectionName !== undefined) {
+      if (
+        this.taskSectionName !== "None" &&
+        this.taskSectionName !== "" &&
+        this.taskSectionName !== null &&
+        this.taskSectionName !== undefined
+      ) {
         id = this.getSections.find((el) => el.name === this.taskSectionName).id;
-        }
+      }
       return id;
     },
     searchLabelIdByName(labelName) {
@@ -158,14 +171,14 @@ export default {
         description: this.taskDescription,
       };
       if (
-        this.taskContent !== "" ||
-        this.taskContent !== null ||
+        this.taskContent !== "" &&
+        this.taskContent !== null &&
         this.taskContent !== undefined
       )
         InfoObj.content = this.taskContent;
       if (this.getSectionId !== -1) InfoObj.sectionId = this.getSectionId;
       if (this.getParentId !== -1) InfoObj.parentId = this.getParentId;
-      if (this.data !== "" || this.data !== null || this.data !== undefined)
+      if (this.data !== "" && this.data !== null && this.data !== undefined)
         InfoObj.due_date = this.taskDate;
       let labelIds = [];
       if (

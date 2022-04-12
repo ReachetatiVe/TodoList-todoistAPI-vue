@@ -76,11 +76,12 @@ export default {
         this.projectName = this.getCurrentProject.name;
       }
       if (
-        this.getCurrentProject.color !== null ||
+        this.getCurrentProject.color !== null &&
         this.getCurrentProject.color !== undefined
       )
         this.color = this.getColorById(this.getCurrentProject.color);
     }
+    this.color = this.getColors[0];
   },
   computed: {
     getProjects() {
@@ -103,19 +104,19 @@ export default {
     confirmProject() {
       if (this.getMode === "create") this.addProject();
       else this.editProject();
-      this.$emit("cancelFunc");
     },
     addProject() {
       if (
-        this.projectName === null ||
-        this.projectName === undefined ||
-        this.projectName === ""
-      )
-        return;
-      this.$store.dispatch("addNewProject", {
-        name: this.projectName,
-        color: this.color.id,
-      });
+        this.projectName !== null &&
+        this.projectName !== undefined &&
+        this.projectName !== ""
+      ) {
+        this.$store.dispatch("addNewProject", {
+          name: this.projectName,
+          color: this.color.id,
+        });
+        this.$emit("cancelFunc");
+      }
     },
     editProject() {
       const projObj = {};
@@ -124,9 +125,9 @@ export default {
       if (this.color !== null) projObj.color = this.color.id;
       else projObj.color = this.getCurrentProject.color;
       this.$store.dispatch("updateCurrentProject", projObj);
+      this.$emit("cancelFunc");
     },
     getColorById(colorId) {
-      console.log(this.getColors.find((item) => item.id === colorId));
       return this.getColors.find((item) => item.id === colorId);
     },
   },

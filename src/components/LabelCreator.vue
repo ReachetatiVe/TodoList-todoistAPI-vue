@@ -6,6 +6,7 @@
       label="label name"
       hide-details="auto"
       v-model="labelName"
+      :rules="rules"
     ></v-text-field>
     <v-menu
       offset-y
@@ -67,6 +68,7 @@ export default {
     return {
       labelName: "",
       color: {},
+      rules: [(value) => !!value || "Required."],
     };
   },
   computed: {
@@ -88,7 +90,7 @@ export default {
     confirmLabel() {
       if (this.mode === "create") this.addLabel();
       else this.editLabel();
-      this.$emit("toggleOverlay");
+
     },
     addLabel() {
       const labelObj = {};
@@ -98,6 +100,7 @@ export default {
           labelObj.color = 33;
         else labelObj.color = this.color.id;
         this.$store.dispatch("addNewLabel", labelObj);
+              this.$emit("toggleOverlay");
       }
     },
     editLabel() {
@@ -109,9 +112,9 @@ export default {
         labelObj.color = this.getThisInfo.color;
       else labelObj.color = this.color.id;
       this.$store.dispatch("updateLabel", labelObj);
+            this.$emit("toggleOverlay");
     },
     getColorById(colorId) {
-      console.log(this.getColors.find((item) => item.id === colorId));
       return this.getColors.find((item) => item.id === colorId);
     },
   },
@@ -121,12 +124,13 @@ export default {
         if (this.getThisInfo.name !== undefined)
           this.labelName = this.getThisInfo.name;
         if (
-          this.getThisInfo.color !== null ||
+          this.getThisInfo.color !== null &&
           this.getThisInfo.color !== undefined
         )
           this.color = this.getColorById(this.getThisInfo.color);
       }
     }
+    else this.color = this.getColors[0];
   },
 };
 </script>
