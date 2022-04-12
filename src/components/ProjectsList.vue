@@ -51,6 +51,7 @@
 
     <ProjecBrowser v-if="showProjectBrowser" />
     <LabelBrowser v-if="showLabels" />
+    <Calendar v-if="showCalendar"/>
 
     <v-overlay :value="showOverlay">
       <ProjectCreator
@@ -66,12 +67,13 @@ import Project from "./Project.vue";
 import ProjecBrowser from "./ProjectBrowser.vue";
 import ProjectCreator from "./ProjectCreator.vue";
 import LabelBrowser from "./LabelBrowser.vue";
+import Calendar from "./Calendar.vue";
 import { mdiPlus } from "@mdi/js";
 
 // @ is an alias to /src
 
 export default {
-  name: "Redirect-page",
+  name: "Project-list",
   data() {
     return {
       drawer: null,
@@ -139,6 +141,7 @@ export default {
     ProjecBrowser,
     ProjectCreator,
     LabelBrowser,
+    Calendar,
   },
 };
 </script>
