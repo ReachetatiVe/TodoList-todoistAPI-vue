@@ -34,10 +34,7 @@
     </v-expansion-panel-content>
     <v-overlay :value="showOverlay">
       <template>
-        <SectionCreator v-bind:mode="'edit'" v-bind:info="this.info" />
-        <v-btn color="success" @click="showOverlay = false">
-          Hide Overlay
-        </v-btn>
+        <SectionCreator v-bind:mode="'edit'" v-bind:info="this.info" v-on:cancelFunc="toggleOverlay"/>
       </template>
     </v-overlay>
   </v-expansion-panel>
@@ -88,6 +85,9 @@ export default {
     deleteSection() {
       this.$store.dispatch("deleteSection", this.info.id);
     },
+    toggleOverlay(){
+      this.showOverlay = !this.showOverlay;
+    }
   },
   components: {
     TaskEntry,

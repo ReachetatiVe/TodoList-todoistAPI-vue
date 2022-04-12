@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="task-creator">
     <h1>{{ getMode }} task</h1>
     <v-text-field
       label="Task content"
@@ -32,8 +32,11 @@
     <v-row justify="center">
       <v-date-picker v-model="date" class="mt-4"></v-date-picker>
     </v-row>
-
+  <v-row  justify="center" max-width=100px>
     <v-btn color="success" @click="confirmTask()">Ok</v-btn>
+    <v-btn color="red" @click="$emit('cancelFunc')">Cancel</v-btn>
+  </v-row>
+
   </div>
 </template>
 
@@ -132,6 +135,7 @@ export default {
     confirmTask() {
       if (this.mode === "create") this.addTask();
       else this.editTask();
+      this.$emit("cancelFunc");
     },
     addTask() {
       this.$store.dispatch("addNewTask", this.getInfo());
@@ -169,9 +173,15 @@ export default {
 
     getInfo() {
       const InfoObj = {
-        content: this.taskContent,
         description: this.taskDescription,
       };
+      //TODO: Сделать error при пустом контенте, проверить на это в сторе
+      if (
+        this.taskContent !== "" ||
+        this.taskContent !== null ||
+        this.taskContent !== undefined
+      )
+        InfoObj.content = this.taskContent;
       if (this.getSectionId !== -1) InfoObj.sectionId = this.getSectionId;
       if (this.getParentId !== -1) InfoObj.parentId = this.getParentId;
       if (this.data !== "" || this.data !== null || this.data !== undefined)
@@ -189,10 +199,15 @@ export default {
           if (id !== -1) labelIds.push(id);
         });
       }
-      if (labelIds.length>0)
-      InfoObj.label_ids  = labelIds;
+      if (labelIds.length > 0) InfoObj.label_ids = labelIds;
       return InfoObj;
     },
   },
+  mounted(){
+    if (this.info !== undefined){
+      if (this.info.content !== undefined) this.taskContent = this.info.content;
+      if (this.info.description !== undefined) this.taskDescription = this.info.description;
+    }
+  }
 };
 </script>

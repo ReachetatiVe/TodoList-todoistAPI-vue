@@ -55,7 +55,7 @@
     <v-overlay :value="showOverlay">
       <ProjectCreator
         v-bind:mode="'create'"
-        v-on:close-overlay="toggleOverlay"
+        v-on:cancelFunc="toggleOverlay"
       />
     </v-overlay>
   </v-container>

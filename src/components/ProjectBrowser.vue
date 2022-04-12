@@ -51,9 +51,9 @@
             >Reopen tasks</v-btn
           >
         </div>
-        <TaskCreator v-if="mode === 'task'" v-bind:mode="'create'" />
-        <SectionCreator v-if="mode === 'section'" v-bind:mode="'create'" />
-        <ProjectCreator v-if="mode === 'project'" v-bind:mode="'create'" />
+        <TaskCreator v-if="mode === 'task'" v-bind:mode="'create'" v-on:cancelFunc="selectMode('task')"/>
+        <SectionCreator v-if="mode === 'section'" v-bind:mode="'create'" v-on:cancelFunc="selectMode('section')"/>
+        <ProjectCreator v-if="mode === 'project'" v-bind:mode="'create'" v-on:cancelFunc="selectMode('project')"/>
       </div>
     </div>
     <div class="text-center d-flex pb-4">
@@ -81,8 +81,7 @@
       />
     </v-expansion-panels>
     <v-overlay :value="showOverlay">
-      <ProjectCreator v-bind:mode="'edit'" />
-      <v-btn color="success" @click="showOverlay = false"> Hide Overlay </v-btn>
+      <ProjectCreator v-bind:mode="'edit'" v-on:cancelFunc="toggleOverlay"/>
     </v-overlay>
   </div>
 </template>
@@ -187,6 +186,9 @@ export default {
     deleteProject() {
       this.$store.dispatch("deleteProject");
     },
+    toggleOverlay(){
+      this.showOverlay = !this.showOverlay;
+    }
   },
   components: {
     Section,

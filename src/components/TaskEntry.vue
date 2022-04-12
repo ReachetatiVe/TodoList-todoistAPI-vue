@@ -67,8 +67,7 @@
       </v-list-item>
     </v-list>
     <v-overlay :value="showOverlay">
-      <TaskCreator v-bind:info="info" v-bind:mode="creatorMode" />
-      <v-btn color="success" @click="showOverlay = false"> Hide Overlay </v-btn>
+      <TaskCreator v-bind:info="info" v-bind:mode="creatorMode" v-on:cancelFunc="toggleOverlay"/>
     </v-overlay>
   </div>
 </template>

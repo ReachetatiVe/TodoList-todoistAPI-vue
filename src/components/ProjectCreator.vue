@@ -50,9 +50,10 @@
         </v-list-item>
       </v-list>
     </v-menu>
-    <div>
+    <v-row justify="center">
       <v-btn color="success" @click="confirmProject()">Ok</v-btn>
-    </div>
+      <v-btn color="error" @click="$emit('cancelFunc')">Cancel</v-btn>
+    </v-row>
   </div>
 </template>
 <script>
@@ -98,10 +99,15 @@ export default {
     confirmProject() {
       if (this.getMode === "create") this.addProject();
       else this.editProject();
-      this.$emit("close-overlay");
+      this.$emit("cancelFunc");
     },
     addProject() {
-      if (this.projectName === null || this.projectName === undefined || this.projectName === "") return
+      if (
+        this.projectName === null ||
+        this.projectName === undefined ||
+        this.projectName === ""
+      )
+        return;
       this.$store.dispatch("addNewProject", {
         name: this.projectName,
         color: this.color.id,

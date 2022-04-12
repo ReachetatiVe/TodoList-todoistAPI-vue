@@ -7,7 +7,10 @@
       hide-details="auto"
       v-model="sectionName"
     ></v-text-field>
-    <v-btn @click="confirmSection()" color="success">Ok</v-btn>
+    <v-row justify="center">
+      <v-btn color="success" @click="confirmSection()">Ok</v-btn>
+      <v-btn color="error" @click="$emit('cancelFunc')">Cancel</v-btn>
+    </v-row>
   </div>
 </template>
 <script>
@@ -45,6 +48,7 @@ export default {
       if (this.getMode === "create") {
         this.addSection();
       } else this.editSection();
+      this.$emit('cancelFunc');
     },
   },
 };
