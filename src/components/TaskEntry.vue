@@ -1,11 +1,12 @@
 <template>
   <div class="task">
     <div class="task__header" @click.stop="addTaskIdToSelected()">
-      <v-checkbox v-model="checkbox">
+      <v-checkbox v-model="checkbox" v-if="!entryInLabel">
         <template v-slot:label>
           <h3>{{ info.content }}</h3>
         </template>
       </v-checkbox>
+      <h2 v-else>{{info.content}}</h2>
     </div>
 
     <div class="task__description">
@@ -58,7 +59,7 @@
         >Delete</v-btn
       >
     </div>
-    <v-list class="task__children" dense>
+    <v-list class="task__children" dense v-if="!entryInLabel">
       <v-list-item
         v-for="subtask in getSubtasks"
         :key="subtask.id"
@@ -85,6 +86,7 @@ export default {
   name: "TaskEntry",
   props: {
     info: {},
+    entryInLabel: Boolean,
   },
   data() {
     return {
@@ -94,6 +96,7 @@ export default {
       icons: {
         mdiDelete
       },
+      labelIds: [],
     };
   },
   computed: {
@@ -107,6 +110,7 @@ export default {
       else return true;
     },
     getTaskLabelIds() {
+      console.log("get label Ids");
       if (
         this.labelIds !== undefined &&
         this.labelIds !== null &&

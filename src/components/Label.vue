@@ -28,7 +28,7 @@
     <v-expansion-panel-content>
       <v-list dense>
         <v-list-item v-for="task in getTasksWithLabel" :key="task.id">
-          <TaskEntry v-bind:info="task" />
+          <TaskEntry v-bind:info="task" v-bind:entryInLabel="true"/>
         </v-list-item>
       </v-list>
     </v-expansion-panel-content>
@@ -77,9 +77,16 @@ export default {
       return this.$store.getters.GET_TASKS;
     },
     getTasksWithLabel() {
-      return this.getTasks.filter((task) => {
-        return task.labelIds.includes(this.getThisInfo.id);
+      let tasksWithLabelSet = new Set;
+      this.getTasks.forEach(task => {
+        if (task.labelIds.includes(this.getThisInfo.id))
+        tasksWithLabelSet.add(task);
       });
+      console.log(tasksWithLabelSet);
+      // return this.getTasks.filter((task) => {
+      //   return task.labelIds.includes(this.getThisInfo.id);
+      // });
+      return tasksWithLabelSet;
     },
     getColorById() {
       let color = "#fff";
