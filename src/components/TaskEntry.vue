@@ -110,7 +110,6 @@ export default {
       else return true;
     },
     getTaskLabelIds() {
-      console.log("get label Ids");
       if (
         this.labelIds !== undefined &&
         this.labelIds !== null &&

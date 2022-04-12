@@ -1,65 +1,72 @@
 <template>
   <v-col class="label-creator">
     <v-row>
-    <h1 class="label-creator__header">{{ getMode }} label</h1>
-    </v-row>
-      <v-row>
-    <v-text-field
-      class="label-creator__text-filed"
-      label="label name"
-      hide-details="auto"
-      v-model="labelName"
-      :rules="rules"
-    ></v-text-field>
+      <h1 class="label-creator__header">{{ getMode }} label</h1>
     </v-row>
     <v-row>
-    <v-menu
-      offset-y
-      outlined
-      class="label-creator__menu"
-      max-height="250"
-      max-width="250"
-      min-width="200"
-    >
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          class="label-creator__menu-btn"
-          color="secondary"
-          dark
-          v-bind="attrs"
-          v-on="on"
-        >
-          <div class="label-creator__color-item">
-            <p>Pick color</p>
-            <span
-              class="label-creator__color"
-              v-bind:style="{ backgroundColor: color.hex }"
-            ></span>
-          </div>
-        </v-btn>
-      </template>
-      <v-list class="label-creator__color-items">
-        <v-list-item
-          v-for="color in getColors"
-          :key="color.id"
-          @click="pickColor(color)"
-        >
-          <v-list-item-title>
+      <v-text-field
+        class="label-creator__text-filed"
+        label="label name"
+        hide-details="auto"
+        v-model="labelName"
+        :rules="rules"
+      ></v-text-field>
+    </v-row>
+    <v-row>
+      <v-menu
+        offset-y
+        outlined
+        class="label-creator__menu"
+        max-height="250"
+        max-width="250"
+        min-width="200"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            class="label-creator__menu-btn"
+            color="secondary"
+            dark
+            v-bind="attrs"
+            v-on="on"
+          >
             <div class="label-creator__color-item">
-              {{ color.name }}
+              <p>Pick color</p>
               <span
                 class="label-creator__color"
                 v-bind:style="{ backgroundColor: color.hex }"
               ></span>
             </div>
-          </v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+          </v-btn>
+        </template>
+        <v-list class="label-creator__color-items">
+          <v-list-item
+            v-for="color in getColors"
+            :key="color.id"
+            @click="pickColor(color)"
+          >
+            <v-list-item-title>
+              <div class="label-creator__color-item">
+                {{ color.name }}
+                <span
+                  class="label-creator__color"
+                  v-bind:style="{ backgroundColor: color.hex }"
+                ></span>
+              </div>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-row>
     <v-row max-width="100" justify="center" class="label-creator__btns">
-      <v-btn @click="confirmLabel()" color="success" class="label-creator__btn">Ok</v-btn>
-      <v-btn color="error" @click="$emit('cancelFunc')" class="label-creator__btn">Cancel</v-btn>
+      <v-btn @click="confirmLabel()" color="success" class="label-creator__btn"
+        >Ok</v-btn
+      >
+      <v-btn
+        color="error"
+        @click="$emit('cancelFunc')"
+        class="label-creator__btn"
+        >Cancel</v-btn
+      >
     </v-row>
   </v-col>
 </template>
@@ -96,7 +103,6 @@ export default {
     confirmLabel() {
       if (this.mode === "create") this.addLabel();
       else this.editLabel();
-
     },
     addLabel() {
       const labelObj = {};
@@ -106,7 +112,7 @@ export default {
           labelObj.color = 33;
         else labelObj.color = this.color.id;
         this.$store.dispatch("addNewLabel", labelObj);
-              this.$emit("toggleOverlay");
+        this.$emit("toggleOverlay");
       }
     },
     editLabel() {
@@ -118,7 +124,7 @@ export default {
         labelObj.color = this.getThisInfo.color;
       else labelObj.color = this.color.id;
       this.$store.dispatch("updateLabel", labelObj);
-            this.$emit("toggleOverlay");
+      this.$emit("toggleOverlay");
     },
     getColorById(colorId) {
       return this.getColors.find((item) => item.id === colorId);
@@ -135,8 +141,7 @@ export default {
         )
           this.color = this.getColorById(this.getThisInfo.color);
       }
-    }
-    else this.color = this.getColors[0];
+    } else this.color = this.getColors[0];
   },
 };
 </script>
@@ -167,12 +172,12 @@ export default {
   &__menu-btn {
     margin-bottom: 15px;
   }
-  &__btns{
+  &__btns {
     position: relative;
   }
   &__btn {
     margin-right: 10px;
-    &:last-child{
+    &:last-child {
       margin-right: 0;
     }
   }
