@@ -118,8 +118,16 @@ export default new Vuex.Store({
         hex: "#ccac93",
       },
     ],
+    clientId: "65d3dc9ff5dc4d698a1288bb4a769065",
+    clientSecret: "7012a5dd7357481a94736d4304f3bc90",
   },
   getters: {
+    GET_CLIENT_ID: (state) => {
+      return state.clientId;
+    },
+    GET_CLIENT_SECRET: (state) => {
+      return state.clientSecret;
+    },
     GET_TOKEN: (state) => {
       return state.token;
     },
@@ -154,6 +162,7 @@ export default new Vuex.Store({
       state.currentProject = payload;
     },
     SET_SECTIONS: (state, payload) => {
+      if (payload === undefined || payload === null) return;
       if (Array.isArray(payload))
         payload.forEach((element) => {
           state.sections.push(element);
@@ -161,22 +170,15 @@ export default new Vuex.Store({
       else state.sections.push(payload);
     },
     SET_TASKS: (state, payload) => {
+      if (payload === undefined || payload === null) return;
       if (Array.isArray(payload))
         payload.forEach((element) => {
           state.tasks.push(element);
         });
       else state.tasks.push(payload);
     },
-    SET_TASKS_IN_CURRENT_SECTION: (state, payload) => {
-      if (Array.isArray(payload))
-        payload.forEach((element) => {
-          state.tasksInCurrentSection.push(element);
-        });
-      else state.tasksInCurrentSection.push(payload);
-    },
     SET_TASK_TO_SELECTED: (state, payload) => {
-      console.log("setSelected");
-      console.log(payload);
+      if (payload === undefined || payload === null) return;
       if (Array.isArray(payload))
         payload.forEach((element) => {
           state.selectedTasks.push(element);
@@ -184,9 +186,11 @@ export default new Vuex.Store({
       else state.selectedTasks.push(payload);
     },
     SET_HAS_CLOSED_TASKS: (state, payload) => {
+      if (payload === undefined || payload === null) return;
       state.hasClosedTasks = payload;
     },
     SET_PROJECTS: (state, payload) => {
+      if (payload === undefined || payload === null) return;
       if (Array.isArray(payload))
         payload.forEach((element) => {
           state.projects.push(element);
@@ -194,6 +198,7 @@ export default new Vuex.Store({
       else state.projects.push(payload);
     },
     SET_LABELS: (state, payload) => {
+      if (payload === undefined || payload === null) return;
       if (Array.isArray(payload))
         payload.forEach((element) => {
           state.labels.push(element);
@@ -201,41 +206,68 @@ export default new Vuex.Store({
       else state.labels.push(payload);
     },
     SET_API: (state, payload) => {
+      if (payload === undefined || payload === null) return;
       state.api = payload;
     },
     SET_TOKEN: (state, payload) => {
+      if (payload === undefined || payload === null) return;
       state.token = payload;
       localStorage.setItem("token", payload);
     },
     UPDATE_PROJECT: (state, payload) => {
-      if (payload.id === undefined || payload.id === null) return;
+      if (
+        payload === undefined ||
+        payload === null ||
+        payload.id === undefined ||
+        payload.id === null ||
+        payload.name === undefined ||
+        payload.name === null ||
+        payload.name === ""
+      )
+        return;
       const index = state.projects.findIndex((p) => p.id === payload.id);
       if (index !== -1) {
         state.projects[index] = payload;
       }
     },
     UPDATE_LABEL: (state, payload) => {
-      if (payload.id === undefined || payload.id === null) return;
+      if (
+        payload === undefined ||
+        payload === null ||
+        payload.id === undefined ||
+        payload.id === null ||
+        payload.name === undefined ||
+        payload.name === null ||
+        payload.name === ""
+      )
+        return;
       const index = state.labels.findIndex((p) => p.id === payload.id);
       if (index !== -1) {
         state.labels[index] = payload;
       }
     },
-    //! рекурсивное удаление
     DELETE_TASK: (state, payload) => {
-      //просто удаляет задачу по id в массиве
+      if (
+        payload === undefined ||
+        payload === null ||
+        payload.id === undefined ||
+        payload.id === null
+      )
+        return;
       state.tasks = state.tasks.filter((el) => {
         return el.id !== payload.id;
       });
     },
     DELETE_TASKS_BY_SECTION_ID: (state, payload) => {
+      if (payload === undefined || payload === null) return;
       state.tasks = state.tasks.filter((el) => {
         return el.sectionId !== payload;
       });
     },
     DELETE_SECTION: (state, payload) => {
+      if (payload === undefined || payload === null) return;
       state.sections = state.sections.filter((el) => {
-        return el.id !== payload.id;
+        return el.id !== payload;
       });
     },
     DELETE_PROJECT: (state, payload) => {
@@ -257,6 +289,13 @@ export default new Vuex.Store({
       });
     },
     DELETE_TASK_FROM_SELECTED: (state, payload) => {
+      if (
+        payload === undefined ||
+        payload === null ||
+        payload.id === undefined ||
+        payload.id === null
+      )
+        return;
       state.selectedTasks = state.selectedTasks.filter((el) => {
         return el.id !== payload.id;
       });
@@ -267,17 +306,17 @@ export default new Vuex.Store({
     CLEAR_PROJECTS: (state) => {
       state.projects = [];
     },
-    CLEAR_STORAGE:(state)=>{
-      state.api= TodoistApi;
-      state.token= "";
-      state.projects= [];
-      state.sections= [];
-      state.tasks= [];
-      state.labels= [];
-      state.tasksInCurrentSection= [];
-      state.currentProject= {};
-      state.selectedTasks= [];
-      state.hasClosedTasks= false;
+    CLEAR_STORAGE: (state) => {
+      state.api = TodoistApi;
+      state.token = "";
+      state.projects = [];
+      state.sections = [];
+      state.tasks = [];
+      state.labels = [];
+      state.tasksInCurrentSection = [];
+      state.currentProject = {};
+      state.selectedTasks = [];
+      state.hasClosedTasks = false;
     },
   },
   actions: {
@@ -339,18 +378,8 @@ export default new Vuex.Store({
         .then((labels) => context.commit("SET_LABELS", labels))
         .catch((error) => console.log(error));
     },
-    getTasksInSection(context, sectionId) {
-      if (sectionId === null || sectionId === undefined) return;
-      context.state.tasksInCurrentSection = [];
-      const api = context.state.api;
-      api
-        .getTasks()
-        .then((tasks) => {
-          context.commit("SET_TASKS_IN_CURRENT_SECTION", tasks);
-        })
-        .catch((error) => console.log(error));
-    },
     getTaskById(context, taskId) {
+      if (taskId === null || taskId === undefined) return;
       const api = context.state.api;
       api
         .getTask(taskId)
@@ -389,7 +418,8 @@ export default new Vuex.Store({
         taskInfo === null ||
         taskInfo === undefined ||
         taskInfo.content === null ||
-        taskInfo.content === undefined
+        taskInfo.content === undefined ||
+        taskInfo.content === ""
       )
         return;
       taskInfo.projectId = context.state.currentProject.id;
@@ -408,7 +438,8 @@ export default new Vuex.Store({
         sectionInfo === null ||
         sectionInfo === undefined ||
         sectionInfo.name === null ||
-        sectionInfo.name === undefined
+        sectionInfo.name === undefined ||
+        sectionInfo.name === ""
       )
         return;
       sectionInfo.projectId = context.state.currentProject.id;
@@ -425,7 +456,8 @@ export default new Vuex.Store({
         projectInfo === null ||
         projectInfo === undefined ||
         projectInfo.name === null ||
-        projectInfo.name === undefined
+        projectInfo.name === undefined ||
+        projectInfo.name === ""
       )
         return;
       const api = context.state.api;
@@ -476,7 +508,7 @@ export default new Vuex.Store({
         return el !== payload.labelId;
       });
       newTaskObj.labelIds = newLabelIds;
-      context.dispatch("updateTask", {id : newTaskObj.id, info: newTaskObj});
+      context.dispatch("updateTask", { id: newTaskObj.id, info: newTaskObj });
     },
     deleteTask(context, taskInfo) {
       if (
@@ -502,6 +534,7 @@ export default new Vuex.Store({
         .catch((error) => console.log(error));
     },
     deleteTaskChildren(context, payload) {
+      if (payload === undefined || payload === null) return;
       let items = payload.items;
       let item = payload.item;
       if (item.parentdId) {
@@ -521,7 +554,7 @@ export default new Vuex.Store({
         .then((isSuccess) => {
           if (isSuccess) {
             context.commit("DELETE_TASKS_BY_SECTION_ID", sectionId);
-            context.commit("DELETE_SECTION", { id: sectionId });
+            context.commit("DELETE_SECTION", sectionId);
           }
         })
         .catch((error) => console.log(error));
@@ -554,6 +587,8 @@ export default new Vuex.Store({
     },
     updateTask(context, task) {
       if (
+        task === null ||
+        task === undefined ||
         task.id === null ||
         task.id === undefined ||
         task.id === "" ||
@@ -574,25 +609,37 @@ export default new Vuex.Store({
         .catch((error) => console.log(error));
     },
     updateSection(context, section) {
-      console.log("Action: updateSection");
-      console.log(section);
-      if (section.id === null || section.id === undefined || section.id === "")
+      if (
+        section === null ||
+        section === undefined ||
+        section.id === null ||
+        section.id === undefined ||
+        section.id === ""
+      )
         return;
       const api = context.state.api;
       api
         .updateSection(section.id, section)
         .then((isSuccess) => {
           console.log(isSuccess);
-          context.commit("DELETE_SECTION", { id: section.id });
+          context.commit("DELETE_SECTION", section.id);
           context.dispatch("getSectionById", section.id);
           // return isSuccess;
         })
         .catch((error) => console.log(error));
     },
     updateCurrentProject(context, newData) {
-      if (newData === undefined || newData === null) return;
-      console.log("Action: updateProject");
-      console.log(newData);
+      if (
+        newData === undefined ||
+        newData === null ||
+        newData.name === "" ||
+        newData.name === undefined ||
+        newData.name === null ||
+        newData.id === "" ||
+        newData.id === undefined ||
+        newData.id === null
+      )
+        return;
       const curProjId = context.state.currentProject.id;
       const api = this.state.api;
 
@@ -610,7 +657,10 @@ export default new Vuex.Store({
         newData === undefined ||
         newData.id === null ||
         newData.id === undefined ||
-        newData.id === ""
+        newData.id === "" ||
+        newData.name === "" ||
+        newData.name === undefined ||
+        newData.name === null
       )
         return;
       const api = context.state.api;
@@ -636,6 +686,14 @@ export default new Vuex.Store({
       });
     },
     closeTask(context, task) {
+      if (
+        task === null ||
+        task === undefined ||
+        task.id === "" ||
+        task.id === undefined ||
+        task.id === null
+      )
+        return;
       const api = context.state.api;
       api
         .closeTask(task.id)
@@ -658,6 +716,14 @@ export default new Vuex.Store({
       });
     },
     reopenTask(context, task) {
+      if (
+        task === null ||
+        task === undefined ||
+        task.id === "" ||
+        task.id === undefined ||
+        task.id === null
+      )
+        return;
       const api = context.state.api;
       api
         .reopenTask(task.id)

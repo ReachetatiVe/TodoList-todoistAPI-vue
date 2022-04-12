@@ -6,6 +6,7 @@
       label="Project name"
       hide-details="auto"
       v-model="projectName"
+      :rules="rules"
     ></v-text-field>
     <v-menu
       offset-y
@@ -66,19 +67,18 @@ export default {
     return {
       projectName: "",
       color: {},
-      projectNames: [],
+      rules: [(value) => !!value || "Required."],
     };
   },
   mounted() {
     this.color = this.getColors[0];
+    if (this.mode !== "create") {
+      if (this.getCurrentProject.name !== undefined) {
+        this.projectName = this.getCurrentProject.name;
+      }
+    }
   },
   computed: {
-    getProjectNames() {
-      this.getProjects.forEach((element) => {
-        this.projectNames.push(element.name);
-      });
-      return this.projectNames;
-    },
     getProjects() {
       return this.$store.getters.GET_PROJECTS;
     },

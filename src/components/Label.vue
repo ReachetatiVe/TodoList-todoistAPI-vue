@@ -81,9 +81,7 @@ export default {
     },
     getColorById() {
       let color = "#fff";
-      this.$store.getters.GET_COLORS.forEach((element) => {
-        if (element.id === this.info.color) color = element.hex;
-      });
+      color = this.$store.getters.GET_COLORS.find(el => el.id === this.info.color).hex;
       return color;
     },
   },

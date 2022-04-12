@@ -26,6 +26,7 @@
         v-bind:style="{ color: getLabelColor(label.color) }"
       >
         {{ label.name }}
+        <v-icon x-small> {{icons.mdiDelete}} </v-icon>
       </span>
     </div>
     <div class="tasks__managament-btns">
@@ -67,13 +68,18 @@
       </v-list-item>
     </v-list>
     <v-overlay :value="showOverlay">
-      <TaskCreator v-bind:info="info" v-bind:mode="creatorMode" v-on:cancelFunc="toggleOverlay"/>
+      <TaskCreator
+        v-bind:info="info"
+        v-bind:mode="creatorMode"
+        v-on:cancelFunc="toggleOverlay"
+      />
     </v-overlay>
   </div>
 </template>
 
 <script>
 import TaskCreator from "./TaskCreator.vue";
+import {mdiDelete} from "@mdi/js";
 
 export default {
   name: "TaskEntry",
@@ -82,10 +88,12 @@ export default {
   },
   data() {
     return {
-      checked: false,
       showOverlay: false,
       creatorMode: "",
       checkbox: false,
+      icons: {
+        mdiDelete
+      },
     };
   },
   computed: {
@@ -108,7 +116,6 @@ export default {
       return -1;
     },
     getTaskLabels() {
-      //Если создать задачу, то доступны все лейблы, иначе только те, которых нет
       if (this.getTaskLabelIds !== -1) {
         const tmp = [];
         this.getLabels.forEach((label) => {
@@ -122,9 +129,6 @@ export default {
       if (this.info.completed) return "Closed";
       else return "Opened";
     },
-    getSections() {
-      return this.$store.getters.GET_SECTIONS;
-    },
     getTasks() {
       return this.$store.getters.GET_TASKS.filter((el) => {
         return el.projectId === this.info.projectId;
@@ -135,31 +139,21 @@ export default {
         return task.parentId === this.info.id;
       });
     },
-    getCreatorModes() {
-      return this.$store.getters.GET_CREATOR_MODES;
-    },
-    getCurrentProject() {
-      return this.$store.getters.GET_CURR_PROJECT;
-    },
-    getLabels() {
-      return this.$store.getters.GET_LABELS;
-    },
   },
   methods: {
     deleteTask() {
       this.$store.dispatch("deleteTask", this.info);
     },
-
-    removeLabelById(labelId){
-      this.$store.dispatch("removeLabelFromTask", {labelId: labelId, task: this.info}); 
+    removeLabelById(labelId) {
+      this.$store.dispatch("removeLabelFromTask", {
+        labelId: labelId,
+        task: this.info,
+      });
     },
-
-    //Open overlay with needed creator mode
     toggleOverlay(creatorMode) {
       this.showOverlay = !this.showOverlay;
       this.creatorMode = creatorMode;
     },
-
     addTaskIdToSelected() {
       if (this.checkbox === true)
         this.$store.commit("SET_TASK_TO_SELECTED", this.info);
@@ -167,9 +161,9 @@ export default {
     },
     getLabelColor(labelColor) {
       let color = "#fff";
-      this.$store.getters.GET_COLORS.forEach((element) => {
-        if (element.id === labelColor) color = element.hex;
-      });
+      color = this.$store.getters.GET_COLORS.find(
+        (el) => el.id === labelColor
+      ).hex;
       return color;
     },
   },
@@ -181,14 +175,8 @@ export default {
 
 <style lang="scss" scoped>
 .task {
-  // .task__header
   &__header {
     cursor: pointer;
-  }
-
-  // .task__description
-  &__description {
-    // max-width: 75%;
   }
   &__children {
     padding-left: 15px;
@@ -207,6 +195,8 @@ export default {
     margin-bottom: 3px;
   }
   &__label {
+    cursor: pointer;
+    align-items: center;
     margin-right: 5px;
     padding: 2px;
     border: 1px solid;

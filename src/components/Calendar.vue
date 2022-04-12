@@ -31,9 +31,6 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item @click="type = 'day'">
-                  <v-list-item-title>Day</v-list-item-title>
-                </v-list-item>
                 <v-list-item @click="type = 'week'">
                   <v-list-item-title>Week</v-list-item-title>
                 </v-list-item>
@@ -104,7 +101,6 @@ export default {
     typeToLabel: {
       month: "Month",
       week: "Week",
-      day: "Day",
       "4day": "4 Days",
     },
     selectedEvent: {},

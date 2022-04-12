@@ -24,10 +24,14 @@ export default {
     getMode() {
       return this.mode;
     },
+    getThisInfo(){
+      return this.info;
+    }
   },
   data() {
     return {
       sectionName: "",
+      rules: [(value) => !!value || "Required."],
     };
   },
   methods: {
@@ -38,38 +42,33 @@ export default {
     },
     editSection() {
       const sectionObj = {};
-      sectionObj.id = this.info.id;
-      //Если имя не изменилось то оставить прежним
+      sectionObj.id = this.getThisInfo.id;
       if (this.sectionName !== "") sectionObj.name = this.sectionName;
-      else sectionObj.name = this.info.name;
+      else sectionObj.name = this.getThisInfo.name;
       this.$store.dispatch("updateSection", sectionObj);
     },
     confirmSection() {
       if (this.getMode === "create") {
         this.addSection();
       } else this.editSection();
-      this.$emit('cancelFunc');
+      this.$emit("cancelFunc");
     },
+  },
+  mounted() {
+    if (this.mode !== "create") {
+      if (this.getThisInfo !== undefined) {
+        if (this.getThisInfo.name !== undefined)
+          this.sectionName = this.getThisInfo.name;
+      }
+    }
   },
 };
 </script>
 
 <style scoped lang="scss">
 .section-creator {
-  // .section-creator__header
-
-  &__header {
-  }
-
-  // .section-creator__text-filed
-
   &__text-filed {
     margin-bottom: 15px;
-  }
-
-  // .section-creator__select
-
-  &__select {
   }
 }
 </style>

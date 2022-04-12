@@ -70,8 +70,6 @@ import LabelBrowser from "./LabelBrowser.vue";
 import Calendar from "./Calendar.vue";
 import { mdiPlus } from "@mdi/js";
 
-// @ is an alias to /src
-
 export default {
   name: "Project-list",
   data() {
@@ -114,9 +112,6 @@ export default {
   },
 
   computed: {
-    getToken() {
-      return this.$store.getters.GET_TOKEN;
-    },
     getProjects() {
       return this.$store.getters.GET_PROJECTS;
     },

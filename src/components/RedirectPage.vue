@@ -1,31 +1,32 @@
 <template>
   <div>
-    <h1>REDIRECT</h1>
+    Redirecting...
   </div>
 </template>
 
 <script>
 import axios from "axios";
-// @ is an alias to /src
 
 export default {
   name: "Redirect-page",
-  data() {
-    return {
-      clientId: "65d3dc9ff5dc4d698a1288bb4a769065",
-      clientSecret: "7012a5dd7357481a94736d4304f3bc90",
-    };
+  computed: {
+    getClientId(){
+      return this.$store.getters.GET_CLIENT_ID;
+    },
+    getClientSecret(){
+      return this.$store.getters.GET_CLIENT_SECRET;
+    }
   },
 
   methods: {
     getToken(code) {
       axios
         .post(
-          `https://todoist.com/oauth/access_token?client_id=${this.clientId}&client_secret=${this.clientSecret}&code=${code}`
+          `https://todoist.com/oauth/access_token?client_id=${this.getClientId}&client_secret=${this.getClientSecret}&code=${code}`
         )
         .then((response) => {
           const token = response.data.access_token;
-          this.$store.dispatch("getApi", token)
+          this.$store.dispatch("getApi", token);
           this.$router.push("./project-list");
         })
         .catch((error) => {

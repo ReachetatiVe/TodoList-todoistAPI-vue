@@ -98,7 +98,6 @@ export default {
   data() {
     return {
       panel: [],
-      showTaskCreator: false,
       mode: "",
       modes: ["task", "section", "project"],
       icons: {
@@ -155,18 +154,8 @@ export default {
         (k, i) => i
       );
     },
-    // Reset the panel
     none() {
       this.panel = [];
-    },
-    isWithoutSection(task) {
-      if (
-        task.sectionId === undefined ||
-        task.sectionId === null ||
-        task.sectionId === 0
-      )
-        return true;
-      else return false;
     },
     selectMode(value) {
       if (this.mode === value) this.mode = "";

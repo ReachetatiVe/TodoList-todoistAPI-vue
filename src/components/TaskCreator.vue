@@ -5,6 +5,7 @@
       label="Task content"
       hide-details="auto"
       v-model="taskContent"
+      :rules="rules"
     ></v-text-field>
     <v-text-field
       v-model="taskDescription"
@@ -30,13 +31,12 @@
       </v-col>
     </v-row>
     <v-row justify="center">
-      <v-date-picker v-model="date" class="mt-4"></v-date-picker>
+      <v-date-picker v-model="taskDate" class="mt-4"></v-date-picker>
     </v-row>
-  <v-row  justify="center" max-width=100px>
-    <v-btn color="success" @click="confirmTask()">Ok</v-btn>
-    <v-btn color="red" @click="$emit('cancelFunc')">Cancel</v-btn>
-  </v-row>
-
+    <v-row max-width="100">
+      <v-btn color="success" @click="confirmTask()">Ok</v-btn>
+      <v-btn color="red" @click="$emit('cancelFunc')">Cancel</v-btn>
+    </v-row>
   </div>
 </template>
 
@@ -44,34 +44,33 @@
 export default {
   name: "Task-Creator",
   props: {
-    //sectionId, parentId for new subtasks
-    //null for new task
     info: {},
     mode: String,
     sections: [],
   },
   data() {
     return {
-      date: "",
+      taskDate: "",
       taskContent: "",
       taskDescription: "",
       taskProjectName: "",
       taskSectionName: "",
-      projectNames: [],
       sectionsNames: [],
       selectedLabelsNames: [],
+      rules: [(value) => !!value || "Required."],
     };
   },
   computed: {
+    getThisInfo() {
+      return this.info;
+    },
     getProjects() {
       return this.$store.getters.GET_PROJECTS;
     },
     getLabels() {
-      console.log("Геттер");
       return this.$store.getters.GET_LABELS;
     },
     getLabelsNames() {
-      //Если создать задачу, то доступны все лейблы, иначе только те, которых нет
       const tmp = [];
       if (this.mode === "create")
         this.getLabels.forEach((el) => {
@@ -79,7 +78,8 @@ export default {
         });
       else
         this.getLabels.forEach((label) => {
-          if (!this.info.labelIds.includes(label.id)) tmp.push(label.name);
+          if (!this.getThisInfo.labelIds.includes(label.id))
+            tmp.push(label.name);
         });
       return tmp;
     },
@@ -98,9 +98,6 @@ export default {
     getCurrentProject() {
       return this.$store.getters.GET_CURR_PROJECT;
     },
-    getSelectedProject() {
-      return this.$store.getters.GET_SELECTED_PROJECT;
-    },
     getSectionsNames() {
       const tmp = [];
       tmp.push("None");
@@ -109,26 +106,20 @@ export default {
       });
       return tmp;
     },
-    getProjectsNames() {
-      const tmp = [];
-      this.getProjects.forEach((el) => {
-        tmp.push(el.name);
-      });
-      return tmp;
-    },
     getParentId() {
-      if (this.info === undefined || this.info.id === undefined) return -1;
-      else return this.info.id;
+      if (this.getThisInfo === undefined || this.getThisInfo.id === undefined)
+        return -1;
+      else return this.getThisInfo.id;
     },
     getSectionId() {
       if (
-        this.info === undefined ||
-        this.info.sectionId === "" ||
-        this.info.sectionId === undefined ||
-        this.info.sectionId === null
+        this.getThisInfo === undefined ||
+        this.getThisInfo.sectionId === "" ||
+        this.getThisInfo.sectionId === undefined ||
+        this.getThisInfo.sectionId === null
       )
         return this.searchSectionId();
-      else return this.info.sectionId;
+      else return this.getThisInfo.sectionId;
     },
   },
   methods: {
@@ -142,25 +133,15 @@ export default {
     },
     editTask() {
       this.$store.dispatch("updateTask", {
-        id: this.info.id,
+        id: this.getThisInfo.id,
         info: this.getInfo(),
       });
     },
 
     searchSectionId() {
-      //Ищет id секции по имени из select
       let id = -1;
-      this.getSections.forEach((el) => {
-        if (el.name === this.taskSectionName) id = el.id;
-      });
-      return id;
-    },
-    searchProjId() {
-      //Ищет id проекта по имени из select
-      let id = null;
-      this.getProjects.forEach((el) => {
-        if (el.name === this.taskProjectName) id = el.id;
-      });
+      if (this.taskSectionName !== "None")
+        id = this.getSections.find((el) => el.name === this.taskSectionName).id;
       return id;
     },
     searchLabelIdByName(labelName) {
@@ -175,7 +156,6 @@ export default {
       const InfoObj = {
         description: this.taskDescription,
       };
-      //TODO: Сделать error при пустом контенте, проверить на это в сторе
       if (
         this.taskContent !== "" ||
         this.taskContent !== null ||
@@ -185,14 +165,14 @@ export default {
       if (this.getSectionId !== -1) InfoObj.sectionId = this.getSectionId;
       if (this.getParentId !== -1) InfoObj.parentId = this.getParentId;
       if (this.data !== "" || this.data !== null || this.data !== undefined)
-        InfoObj.due_date = this.date;
+        InfoObj.due_date = this.taskDate;
       let labelIds = [];
       if (
-        this.info !== undefined &&
-        this.info.labelIds !== undefined &&
-        this.info.labelIds.length > 0
+        this.getThisInfo !== undefined &&
+        this.getThisInfo.labelIds !== undefined &&
+        this.getThisInfo.labelIds.length > 0
       )
-        labelIds = [...this.info.labelIds];
+        labelIds = [...this.getThisInfo.labelIds];
       if (this.selectedLabelsNames.length > 0) {
         this.selectedLabelsNames.forEach((labelName) => {
           let id = this.searchLabelIdByName(labelName);
@@ -203,11 +183,17 @@ export default {
       return InfoObj;
     },
   },
-  mounted(){
-    if (this.info !== undefined){
-      if (this.info.content !== undefined) this.taskContent = this.info.content;
-      if (this.info.description !== undefined) this.taskDescription = this.info.description;
+  mounted() {
+    if (this.mode !== "create") {
+      if (this.getThisInfo !== undefined) {
+        if (this.getThisInfo.content !== undefined)
+          this.taskContent = this.getThisInfo.content;
+        if (this.getThisInfo.description !== undefined)
+          this.taskDescription = this.getThisInfo.description;
+        if (this.getThisInfo.due !== undefined)
+          this.taskDate = this.getThisInfo.due.date;
+      }
     }
-  }
+  },
 };
 </script>
