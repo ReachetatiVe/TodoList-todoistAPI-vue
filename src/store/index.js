@@ -688,11 +688,13 @@ export default new Vuex.Store({
         .closeTask(task.id)
         .then((isSuccess) => {
           if (isSuccess) {
-            context.commit("SET_HAS_CLOSED_TASKS", true);
             context.commit("DELETE_TASK_FROM_SELECTED", task);
             if (task.parentId === undefined || task.parentId === null)
               context.dispatch("deleteTask", task);
-            else task.completed = true;
+            else {
+              task.completed = true;
+              context.commit("SET_HAS_CLOSED_TASKS", true);
+            }
           }
         })
         .catch((error) => console.log(error));

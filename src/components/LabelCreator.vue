@@ -1,6 +1,9 @@
 <template>
-  <div class="label-creator">
+  <v-col class="label-creator">
+    <v-row>
     <h1 class="label-creator__header">{{ getMode }} label</h1>
+    </v-row>
+      <v-row>
     <v-text-field
       class="label-creator__text-filed"
       label="label name"
@@ -8,6 +11,8 @@
       v-model="labelName"
       :rules="rules"
     ></v-text-field>
+    </v-row>
+    <v-row>
     <v-menu
       offset-y
       outlined
@@ -51,11 +56,12 @@
         </v-list-item>
       </v-list>
     </v-menu>
-    <div>
-      <v-btn @click="confirmLabel()" color="success">Ok</v-btn>
-      <v-btn color="error" @click="$emit('cancelFunc')">Cancel</v-btn>
-    </div>
-  </div>
+    </v-row>
+    <v-row max-width="100" justify="center" class="label-creator__btns">
+      <v-btn @click="confirmLabel()" color="success" class="label-creator__btn">Ok</v-btn>
+      <v-btn color="error" @click="$emit('cancelFunc')" class="label-creator__btn">Cancel</v-btn>
+    </v-row>
+  </v-col>
 </template>
 <script>
 export default {
@@ -160,6 +166,15 @@ export default {
   }
   &__menu-btn {
     margin-bottom: 15px;
+  }
+  &__btns{
+    position: relative;
+  }
+  &__btn {
+    margin-right: 10px;
+    &:last-child{
+      margin-right: 0;
+    }
   }
 }
 </style>

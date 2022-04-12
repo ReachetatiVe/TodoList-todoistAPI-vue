@@ -1,17 +1,22 @@
 <template>
-  <div class="section-creator">
-    <h1 class="section-creator__header">{{ getMode }} section</h1>
-    <v-text-field
-      class="section-creator__text-filed"
-      label="Section name"
-      hide-details="auto"
-      v-model="sectionName"
-    ></v-text-field>
-    <v-row justify="center">
-      <v-btn color="success" @click="confirmSection()">Ok</v-btn>
-      <v-btn color="error" @click="$emit('cancelFunc')">Cancel</v-btn>
+  <v-col class="section-creator">
+    <v-row>
+      <h1 class="section-creator__header">{{ getMode }} section</h1>
     </v-row>
-  </div>
+    <v-row>
+      <v-text-field
+        class="section-creator__text-filed"
+        label="Section name"
+        hide-details="auto"
+        v-model="sectionName"
+      >
+      </v-text-field>
+    </v-row>
+    <v-row justify="center" class="section-creator__btns">
+      <v-btn color="success" @click="confirmSection()" class="section-creator__btn">Ok</v-btn>
+      <v-btn color="error" @click="$emit('cancelFunc')" class="section-creator__btn">Cancel</v-btn>
+    </v-row>
+  </v-col>
 </template>
 <script>
 export default {
@@ -24,9 +29,9 @@ export default {
     getMode() {
       return this.mode;
     },
-    getThisInfo(){
+    getThisInfo() {
       return this.info;
-    }
+    },
   },
   data() {
     return {
@@ -69,6 +74,15 @@ export default {
 .section-creator {
   &__text-filed {
     margin-bottom: 15px;
+  }
+  &__btns{
+    position: relative;
+  }
+  &__btn{
+    margin-right: 10px;
+    &:last-child{
+      margin-right: 0;
+    }
   }
 }
 </style>

@@ -1,23 +1,31 @@
 <template>
-  <div class="task-creator">
-    <h1>{{ getMode }} task</h1>
-    <v-text-field
-      label="Task content"
-      hide-details="auto"
-      v-model="taskContent"
-      :rules="rules"
-    ></v-text-field>
-    <v-text-field
-      v-model="taskDescription"
-      label="Task description"
-    ></v-text-field>
-    <v-select
-      v-if="getMode === 'create' && getParentId === -1"
-      outlined
-      v-model="taskSectionName"
-      :items="getSectionsNames"
-      label="Select section"
-    ></v-select>
+  <v-col class="task-creator">
+    <v-row>
+      <h1>{{ getMode }} task</h1>
+    </v-row>
+    <v-row>
+      <v-text-field
+        label="Task content"
+        hide-details="auto"
+        v-model="taskContent"
+        :rules="rules"
+      ></v-text-field>
+    </v-row>
+    <v-row>
+      <v-text-field
+        v-model="taskDescription"
+        label="Task description"
+      ></v-text-field>
+    </v-row>
+    <v-row>
+      <v-select
+        v-if="getMode === 'create' && getParentId === -1"
+        outlined
+        v-model="taskSectionName"
+        :items="getSectionsNames"
+        label="Select section"
+      ></v-select>
+    </v-row>
     <v-row>
       <v-col cols="12">
         <v-combobox
@@ -33,11 +41,15 @@
     <v-row justify="center">
       <v-date-picker v-model="taskDate" class="mt-4"></v-date-picker>
     </v-row>
-    <v-row max-width="100" justify="center">
-      <v-btn color="success" @click="confirmTask()">Ok</v-btn>
-      <v-btn color="red" @click="$emit('cancelFunc')">Cancel</v-btn>
+    <v-row max-width="100" justify="center" class="task-creator__btns">
+      <v-btn color="success" @click="confirmTask()" class="task-creator__btn"
+        >Ok</v-btn
+      >
+      <v-btn color="red" @click="$emit('cancelFunc')" class="task-creator__btn"
+        >Cancel</v-btn
+      >
     </v-row>
-  </div>
+  </v-col>
 </template>
 
 <script>
@@ -57,9 +69,7 @@ export default {
       taskSectionName: "",
       sectionsNames: [],
       selectedLabelsNames: [],
-      rules: [
-        (value) => !!value || "Required.",
-      ],
+      rules: [(value) => !!value || "Required."],
     };
   },
   computed: {
@@ -176,9 +186,14 @@ export default {
         this.taskContent !== undefined
       )
         InfoObj.content = this.taskContent;
-      if (this.getSectionId !== -1) InfoObj.sectionId = this.getSectionId;
+      if (this.getSectionId !== -1 && this.getSectionId !== 0)
+        InfoObj.sectionId = this.getSectionId;
       if (this.getParentId !== -1) InfoObj.parentId = this.getParentId;
-      if (this.data !== "" && this.data !== null && this.data !== undefined)
+      if (
+        this.taskDate !== "" &&
+        this.taskDate !== null &&
+        this.taskDate !== undefined
+      )
         InfoObj.due_date = this.taskDate;
       let labelIds = [];
       if (
@@ -211,3 +226,16 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.task-creator {
+  &__btns {
+    position: relative;
+  }
+  &__btn {
+    margin-right: 10px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+</style>

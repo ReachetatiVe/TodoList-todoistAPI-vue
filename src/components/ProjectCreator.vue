@@ -1,13 +1,18 @@
 <template>
-  <div class="project-creator">
-    <h1>{{ getMode }} project</h1>
-    <v-text-field
-      class="project-creator__text-filed"
-      label="Project name"
-      hide-details="auto"
-      v-model="projectName"
-      :rules="rules"
-    ></v-text-field>
+  <v-col class="project-creator">
+    <v-row>
+      <h1>{{ getMode }} project</h1>
+    </v-row>
+    <v-row>
+      <v-text-field
+        class="project-creator__text-filed"
+        label="Project name"
+        hide-details="auto"
+        v-model="projectName"
+        :rules="rules"
+      ></v-text-field>
+    </v-row>
+    <v-row>
     <v-menu
       offset-y
       outlined
@@ -51,11 +56,12 @@
         </v-list-item>
       </v-list>
     </v-menu>
-    <v-row justify="center">
-      <v-btn color="success" @click="confirmProject()">Ok</v-btn>
-      <v-btn color="error" @click="$emit('cancelFunc')">Cancel</v-btn>
     </v-row>
-  </div>
+    <v-row justify="center" class="project-creator__btns">
+      <v-btn color="success" @click="confirmProject()" class="project-creator__btn">Ok</v-btn>
+      <v-btn color="error" @click="$emit('cancelFunc')" class="project-creator__btn">Cancel</v-btn>
+    </v-row>
+  </v-col>
 </template>
 <script>
 export default {
@@ -156,6 +162,15 @@ export default {
   }
   &__menu-btn {
     margin-bottom: 15px;
+  }
+  &__btns{
+    position: relative;
+  }
+  &__btn{
+    margin-right: 10px;
+    &:last-child{
+      margin-right: 0;
+    }
   }
 }
 </style>
