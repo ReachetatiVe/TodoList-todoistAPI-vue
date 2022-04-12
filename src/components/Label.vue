@@ -77,16 +77,9 @@ export default {
       return this.$store.getters.GET_TASKS;
     },
     getTasksWithLabel() {
-      let tasksWithLabelSet = new Set;
-      this.getTasks.forEach(task => {
-        if (task.labelIds.includes(this.getThisInfo.id))
-        tasksWithLabelSet.add(task);
+      return this.getTasks.filter((task) => {
+        return task.labelIds.includes(this.getThisInfo.id);
       });
-      console.log(tasksWithLabelSet);
-      // return this.getTasks.filter((task) => {
-      //   return task.labelIds.includes(this.getThisInfo.id);
-      // });
-      return tasksWithLabelSet;
     },
     getColorById() {
       let color = "#fff";
