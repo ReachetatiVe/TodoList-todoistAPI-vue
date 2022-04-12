@@ -140,9 +140,10 @@ export default {
 
     searchSectionId() {
       let id = -1;
-      if (this.taskSectionName !== "None" || this.taskSectionName !=="" || this.taskSectionName !==null || this.taskSectionName !== undefined)
+      console.log(this.taskSectionName);
+      if (this.taskSectionName !== "None" && this.taskSectionName !=="" && this.taskSectionName !==null && this.taskSectionName !== undefined) {
         id = this.getSections.find((el) => el.name === this.taskSectionName).id;
-        console.log(id);
+        }
       return id;
     },
     searchLabelIdByName(labelName) {
