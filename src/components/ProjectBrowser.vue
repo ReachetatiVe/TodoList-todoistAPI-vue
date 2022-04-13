@@ -35,7 +35,7 @@
             >Add {{ item }}</v-btn
           >
           <v-btn
-            v-show="getSelectedTasks.length > 0"
+            v-show="getSelectedTasks.length > 0 && !getHasClosedTasks"
             color="error"
             large
             class="creators__btn"
