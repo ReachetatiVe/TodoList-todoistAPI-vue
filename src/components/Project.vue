@@ -1,6 +1,6 @@
 <template>
-  <v-list-item-content>
-    <v-list-item-title @click="makeProjectCurrent()">
+  <v-list-item-content @click="makeProjectCurrent()">
+    <v-list-item-title>
       <span class="project-color" v-bind:style="{ backgroundColor: getColorById }"></span>{{" "+info.name }}
     </v-list-item-title>
   </v-list-item-content>

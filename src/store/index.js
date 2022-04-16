@@ -476,8 +476,9 @@ export default new Vuex.Store({
       const api = context.state.api;
       api
         .addLabel(labelInfo)
-        .then((label) => {
-          context.commit("SET_LABELS", label);
+        .then(() => {
+          // context.commit("SET_LABELS", label);
+          context.dispatch("getAllLabels");
         })
         .catch((error) => console.log(error));
     },
@@ -514,29 +515,10 @@ export default new Vuex.Store({
         .deleteTask(taskInfo.id)
         .then((isSuccess) => {
           if (isSuccess) {
-            let tasksFromParentSection = context.state.tasks.filter((el) => {
-              return el.sectionId === taskInfo.sectionId;
-            });
-            context.dispatch("deleteTaskChildren", {
-              items: tasksFromParentSection,
-              item: taskInfo,
-            });
+            context.dispatch("getAllTasks");
           }
         })
         .catch((error) => console.log(error));
-    },
-    deleteTaskChildren(context, payload) {
-      if (payload === undefined || payload === null) return;
-      let items = payload.items;
-      let item = payload.item;
-      if (item.parentdId) {
-        items = context.dispatch("deleteTaskChildren", {
-          items: items,
-          item: item[item.parentId],
-        });
-      }
-      context.commit("DELETE_TASK", item);
-      return items;
     },
     deleteSection(context, sectionId) {
       if (sectionId === undefined || sectionId === null) return;
