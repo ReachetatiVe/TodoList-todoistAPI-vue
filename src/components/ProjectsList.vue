@@ -21,7 +21,8 @@
                 fab
                 dark
                 color="indigo"
-                ><v-icon hover @click.stop="showOverlay = true">{{
+                @click.stop="showOverlay = true"
+                ><v-icon hover >{{
                   icons.mdiPlus
                 }}</v-icon>
               </v-btn>
@@ -48,10 +49,7 @@
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Manager </v-toolbar-title>
     </v-app-bar>
-
-    <ProjecBrowser v-if="showProjectBrowser" />
-    <LabelBrowser v-if="showLabels" />
-    <Calendar v-if="showCalendar"/>
+    <router-view/>
 
     <v-overlay :value="showOverlay">
       <ProjectCreator
@@ -64,10 +62,7 @@
 
 <script>
 import Project from "./Project.vue";
-import ProjecBrowser from "./ProjectBrowser.vue";
 import ProjectCreator from "./ProjectCreator.vue";
-import LabelBrowser from "./LabelBrowser.vue";
-import Calendar from "./Calendar.vue";
 import { mdiPlus } from "@mdi/js";
 
 export default {
@@ -94,16 +89,19 @@ export default {
       this.showLabels = false;
       this.showOverlay = false;
       this.showCalendar = !this.showCalendar;
+      this.$router.push('/projects-list/calendar');
     },
     toggleShowLabels() {
       this.showOverlay = false;
       this.showCalendar = false;
       this.showLabels = !this.showLabels;
+      this.$router.push('/projects-list/label-browser');
     },
     toggleShowProjectBrowser() {
       this.showOverlay = false;
       this.showCalendar = false;
       this.showLabels = false;
+      this.$router.push('/projects-list/project-browser');
     },
     logout(){
       this.$store.commit("CLEAR_STORAGE");
@@ -133,10 +131,10 @@ export default {
 
   components: {
     Project,
-    ProjecBrowser,
+    // ProjecBrowser,
     ProjectCreator,
-    LabelBrowser,
-    Calendar,
+    // LabelBrowser,
+    // Calendar,
   },
 };
 </script>

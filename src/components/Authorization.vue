@@ -1,7 +1,9 @@
 <template>
-    <div class="autorization">
-      <v-btn x-large color="primary" elevation="6" @click="authorization()">LogIn</v-btn>
-    </div>
+  <div class="autorization">
+    <v-btn x-large color="primary" elevation="6" @click="authorization()"
+      >LogIn</v-btn
+    >
+  </div>
 </template>
 
 <script>
@@ -10,14 +12,14 @@
 export default {
   name: "AuthorizationPage",
   computed: {
-    getToken() {
-      return this.$store.getters.GET_TOKEN;
+    getClientId() {
+      return this.$store.getters.GET_CLIENT_ID;
     },
   },
   methods: {
     authorization() {
       window.location.href =
-        "https://todoist.com/oauth/authorize?client_id=65d3dc9ff5dc4d698a1288bb4a769065&scope=data:read_write,data:delete&state=secretstring";
+        `https://todoist.com/oauth/authorize?client_id=${this.getClientId}&scope=data:read_write,data:delete&state=secretstring`;
     },
   },
 };
